@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVA: De los problemas cotidianos a las primeras soluciones en Excel</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        html {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        main {
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+        @media (max-width: 767px) {
+            main {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+            * { box-sizing: border-box; }
+            body, html, main, .accordion-panel, .content-section {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
+            pre { overflow-x: auto; max-width: 100%; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+            h4 { font-size: 1.125rem !important; }
+            .accordion-panel {
+                overflow-x: hidden;
+                max-width: 100%;
+                padding: 0.5rem !important;
+            }
+            .content-section {
+                overflow-x: hidden;
+                max-width: 100%;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+        .nav-tab {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .nav-tab.active, .nav-tab:hover {
+            background-color: #115e59;
+            color: #ffffff;
+            border-radius: 0.5rem;
+        }
+        .content-pane {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-pane.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .quiz-option:hover { background-color: #fff1f2; }
+        .quiz-option.selected {
+            background-color: #ffe4e6;
+            border-color: #f43f5e;
+        }
+        .accordion-btn { cursor: pointer; }
+        .accordion-panel { transition: all 0.3s ease; }
+        .drop-zone {
+            min-height: 3rem;
+            transition: all 0.2s ease;
+        }
+        .drop-zone.drag-over { background-color: #ccfbf1; border-color: #0d9488; }
+        .draggable-item { cursor: grab; }
+        .draggable-item:active { cursor: grabbing; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="min-h-screen bg-slate-50">
+
+        <!-- ENCABEZADO SUPERIOR -->
+        <header class="bg-slate-900 shadow-2xl text-slate-100">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+                <img src="img/logo.svg" alt="Logo" class="h-10 w-10 rounded-lg bg-white p-1">
+                <span class="font-bold text-white text-lg">De problemas a Excel — Algoritmia y Programación</span>
+            </div>
+        </header>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-100 border-t border-slate-700 z-50">
+            <div class="max-w-6xl mx-auto flex justify-around items-center h-16 overflow-x-auto">
+                <button class="nav-tab active flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="introduccion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="hidden sm:inline">Intro</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="objetivos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span class="hidden sm:inline">Objetivos</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="contenido">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="hidden sm:inline">Contenido</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="actividades">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="hidden sm:inline">Actividades</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="evaluacion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="hidden sm:inline">Evaluación</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="recursos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    <span class="hidden sm:inline">Recursos</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="bibliografia">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="hidden sm:inline">Bibliografía</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="p-4 sm:p-6 md:p-10 max-w-6xl mx-auto pb-24">
+
+            <!-- SECCIÓN: INTRODUCCIÓN -->
+            <div id="introduccion" class="content-pane active">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-4">Antes de programar, pensemos</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Programar no es solo escribir instrucciones en un computador. En Ingeniería Industrial, la programación comienza mucho antes: con la capacidad de analizar una situación real, reconocer la información disponible, definir qué necesitamos obtener y organizar un procedimiento lógico que nos lleve al resultado.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Retirar dinero de un cajero, calcular cuántas unidades se producen por hora o saber si una planta alcanzó su meta son problemas cotidianos que, aunque parecen distintos, siguen la misma lógica: primero pensamos, luego organizamos y finalmente usamos una herramienta —en este caso Excel— para ejecutar nuestra solución.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Esta lógica —<strong>Entrada → Proceso → Salida</strong>— será la base para avanzar hacia herramientas como PSeInt y Java, pero también será el corazón de cualquier sistema de automatización, control de calidad o planificación de la producción que encontremos en la industria.
+                </p>
+                <div class="mt-8 p-4 sm:p-6 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg">
+                    <p class="text-teal-900">
+                        <span class="text-xl">✨</span> En este OVA convertirás situaciones reales de planta en soluciones ordenadas que luego podrás ejecutar en Excel. <span class="text-xl">🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: OBJETIVOS -->
+            <div id="objetivos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Objetivos de aprendizaje</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🧠</span>
+                        <span>Comprender que resolver un problema implica organizar una secuencia ordenada y finita de pasos antes de usar cualquier herramienta computacional.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">💡</span>
+                        <span>Identificar las entradas, el proceso y la salida de problemas propios de la ingeniería industrial.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🔧</span>
+                        <span>Expresar soluciones mediante pasos, diagramas de flujo y fórmulas básicas de Excel.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">📊</span>
+                        <span>Usar los operadores aritméticos y de comparación de Excel para calcular indicadores y tomar decisiones sencillas en contextos productivos.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🎯</span>
+                        <span>Reconocer que la herramienta ejecuta la solución que el ingeniero diseña, pero no decide por sí sola qué operación debe realizarse.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SECCIÓN: CONTENIDO -->
+            <div id="contenido" class="content-pane">
+                <div class="w-full max-w-8xl mx-auto">
+
+                    <!-- Gamificación global -->
+                    <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="text-teal-900 font-bold">🏆 Puntos acumulados: <span id="puntos-total" class="text-rose-600 text-2xl">0</span></p>
+                            <p class="text-slate-600 text-sm">Resuelve las actividades y gana insignias.</p>
+                        </div>
+                        <div id="insignias" class="flex gap-2 text-2xl"></div>
+                    </div>
+
+                    <!-- ACORDEÓN 1: Resolver un problema implica organizar una solución -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-1">
+                            <span>1. De la cotidianidad a los pasos de una solución</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-1" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-1-contenido" class="content-section">
+                                <p class="mb-4">
+                                    En una planta industrial, un mismo problema puede resolverse de varias formas. Una línea de ensamble puede organizarse de manera distinta, un cajero puede entregar dinero con más o menos validaciones y un operario puede contar un inventario de varias maneras. Lo importante es que los pasos sean ordenados, finitos y sin ambigüedad.
+                                </p>
+                                <p class="mb-4">
+                                    <strong>Algoritmo:</strong> una secuencia ordenada y finita de instrucciones que resuelve un problema o realiza una tarea. Esta idea es la base del pensamiento computacional y de la automatización industrial.
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200 text-center">
+                                        <p class="text-3xl mb-2">📥</p>
+                                        <p class="font-bold text-teal-900">Entrada</p>
+                                        <p class="text-sm text-slate-600">¿Qué conozco?</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200 text-center">
+                                        <p class="text-3xl mb-2">⚙️</p>
+                                        <p class="font-bold text-teal-900">Proceso</p>
+                                        <p class="text-sm text-slate-600">¿Qué debo hacer?</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200 text-center">
+                                        <p class="text-3xl mb-2">📤</p>
+                                        <p class="font-bold text-teal-900">Salida</p>
+                                        <p class="text-sm text-slate-600">¿Qué quiero obtener?</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Actividad: Clasifica el flujo</p>
+                                    <p class="text-slate-600 text-sm mb-3">Lee el caso y arrastra cada elemento a Entrada, Proceso o Salida. Gana 15 puntos por respuesta correcta.</p>
+                                    <div class="bg-white p-3 rounded border border-slate-200 mb-3">
+                                        <p class="font-semibold text-teal-900">Caso:</p>
+                                        <p class="text-slate-700 text-sm">Una planta recibió <strong>320 unidades</strong> de materia prima, <strong>5 operarios</strong> las procesan y al final se reportan <strong>unidades terminadas por hora</strong>.</p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mb-3" id="eps-items">
+                                        <span class="draggable-item bg-white border border-slate-300 px-3 py-1 rounded-full text-sm" draggable="true" data-value="entrada">320 unidades</span>
+                                        <span class="draggable-item bg-white border border-slate-300 px-3 py-1 rounded-full text-sm" draggable="true" data-value="proceso">Dividir unidades entre horas</span>
+                                        <span class="draggable-item bg-white border border-slate-300 px-3 py-1 rounded-full text-sm" draggable="true" data-value="entrada">5 operarios</span>
+                                        <span class="draggable-item bg-white border border-slate-300 px-3 py-1 rounded-full text-sm" draggable="true" data-value="salida">Unidades por hora</span>
+                                        <span class="draggable-item bg-white border border-slate-300 px-3 py-1 rounded-full text-sm" draggable="true" data-value="proceso">Calcular rendimiento</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div class="drop-zone border-2 border-dashed border-teal-300 rounded-lg p-3 bg-slate-50" data-zone="entrada">
+                                            <p class="text-teal-900 font-bold text-sm mb-2">Entrada</p>
+                                        </div>
+                                        <div class="drop-zone border-2 border-dashed border-teal-300 rounded-lg p-3 bg-slate-50" data-zone="proceso">
+                                            <p class="text-teal-900 font-bold text-sm mb-2">Proceso</p>
+                                        </div>
+                                        <div class="drop-zone border-2 border-dashed border-teal-300 rounded-lg p-3 bg-slate-50" data-zone="salida">
+                                            <p class="text-teal-900 font-bold text-sm mb-2">Salida</p>
+                                        </div>
+                                    </div>
+                                    <button id="verificar-eps" class="mt-3 bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Verificar</button>
+                                    <p id="eps-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+
+                                <!-- RECURSO-EXTERNO id="recurso-ext-1" -->
+                                <!-- Tema: pensamiento computacional en ingeniería industrial. Búsqueda sugerida: "pensamiento computacional ingeniería industrial problemas cotidianos" -->
+                                <div id="recurso-ext-1" class="mt-6 p-5 bg-teal-50 border border-teal-300 rounded-xl shadow-sm">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="bg-teal-200 text-teal-900 text-xs font-bold px-2 py-1 rounded-full">📹 Recurso sugerido</span>
+                                        <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2 py-1 rounded-full">⏳ URL pendiente</span>
+                                    </div>
+                                    <p class="text-teal-900 font-semibold mb-1">Pensamiento computacional aplicado a la ingeniería</p>
+                                    <p class="text-slate-600 text-sm mb-4">🔍 Búsqueda sugerida: <em>"pensamiento computacional ingeniería industrial problemas cotidianos"</em></p>
+                                    <a href="#" target="_blank"
+                                       class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors text-sm opacity-50 cursor-not-allowed">
+                                        <span>▶️</span> Ver recurso
+                                    </a>
+                                    <div class="mt-4 p-3 bg-teal-100 border border-teal-300 rounded-lg">
+                                        <p class="text-teal-900 text-xs font-bold mb-1">Cómo activar este recurso:</p>
+                                        <p class="text-teal-800 text-xs mb-2">Busca el video o recurso y dile esto a tu agente de IA:</p>
+                                        <div class="bg-white border border-teal-300 rounded p-2 text-xs text-slate-700 italic select-all">
+                                            "Encontré un recurso para el recurso-ext-1 del OVA. Actualízalo con esta URL: [URL] y ponle el título: [título]."
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 2: Del procedimiento al algoritmo -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-2">
+                            <span>2. Del procedimiento al algoritmo</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-2" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-2-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Encontrar una respuesta no basta: también debemos poder explicar <strong>cómo llegamos a ella</strong>. Esa explicación ordenada es el algoritmo. En entornos industriales, los algoritmos aparecen en el control de calidad, en la programación de la producción, en el seguimiento de inventarios y en la automatización de procesos.
+                                </p>
+                                <p class="mb-4">
+                                    Por ejemplo, para calcular la producción promedio por hora podemos escribir:
+                                </p>
+                                <ol class="list-decimal list-inside bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+                                    <li>Obtener la cantidad de unidades producidas.</li>
+                                    <li>Obtener la cantidad de horas trabajadas.</li>
+                                    <li>Dividir las unidades producidas entre las horas trabajadas.</li>
+                                    <li>Mostrar la producción promedio por hora.</li>
+                                </ol>
+                                <p class="mb-4">
+                                    Los pasos 1 y 2 son <strong>entradas</strong>, el paso 3 es el <strong>proceso</strong> y el paso 4 es la <strong>salida</strong>.
+                                </p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Actividad: Ordena el algoritmo</p>
+                                    <p class="text-slate-600 text-sm mb-3">Ordena los pasos para calcular el costo de materiales por unidad. Gana 20 puntos.</p>
+                                    <ul id="pasos-desordenados" class="space-y-2 mb-3">
+                                        <li class="paso-orden bg-white border border-slate-300 p-2 rounded cursor-pointer hover:bg-rose-50 text-sm" data-order="3">Dividir el costo total entre el número de unidades.</li>
+                                        <li class="paso-orden bg-white border border-slate-300 p-2 rounded cursor-pointer hover:bg-rose-50 text-sm" data-order="1">Obtener el costo total de materiales.</li>
+                                        <li class="paso-orden bg-white border border-slate-300 p-2 rounded cursor-pointer hover:bg-rose-50 text-sm" data-order="4">Mostrar el costo por unidad.</li>
+                                        <li class="paso-orden bg-white border border-slate-300 p-2 rounded cursor-pointer hover:bg-rose-50 text-sm" data-order="2">Obtener la cantidad de unidades fabricadas.</li>
+                                    </ul>
+                                    <button id="verificar-orden" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Verificar orden</button>
+                                    <p id="orden-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 3: Nuestra primera fórmula en Excel -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-3">
+                            <span>3. De la lógica a las celdas de Excel</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-3" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-3-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Cuando sabemos qué queremos hacer, podemos usar Excel para ejecutar la solución. Excel organiza la información en <strong>filas</strong> y <strong>columnas</strong>; la intersección es una <strong>celda</strong> (A1, B2, C4...).
+                                </p>
+                                <p class="mb-4">
+                                    El signo <code>=</code> indica que vamos a escribir una fórmula. Las referencias (A2, B2) son los datos, los operadores (<code>+ - * /</code>) indican el proceso y la celda final muestra la salida.
+                                </p>
+                                <p class="mb-4">
+                                    La idea clave: <strong>Excel no decide qué operación usar</strong>. El ingeniero analiza el problema y luego le dice a la herramienta qué calcular.
+                                </p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Actividad: Simulador de productividad</p>
+                                    <p class="text-slate-600 text-sm mb-3">Ingresa los datos y escribe la fórmula correcta. Gana 25 puntos.</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <label class="text-xs font-semibold text-teal-900">Unidades producidas</label>
+                                            <input id="sim-unidades" type="number" value="480" class="w-full border border-slate-300 rounded p-2 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-semibold text-teal-900">Horas trabajadas</label>
+                                            <input id="sim-horas" type="number" value="8" class="w-full border border-slate-300 rounded p-2 text-sm">
+                                        </div>
+                                    </div>
+                                    <label class="text-xs font-semibold text-teal-900">Fórmula (usa A2/B2, A2*B2, etc.)</label>
+                                    <input id="sim-formula" type="text" value="" placeholder="=A2/B2" class="w-full border border-slate-300 rounded p-2 text-sm mb-3 font-mono">
+                                    <button id="sim-ejecutar" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Ejecutar fórmula</button>
+                                    <div class="mt-3 bg-white p-3 rounded border border-slate-200">
+                                        <p class="text-sm text-slate-700">Resultado: <span id="sim-resultado" class="font-bold text-teal-900 text-lg">—</span> <span id="sim-unidad" class="text-slate-500 text-sm">unidades/hora</span></p>
+                                    </div>
+                                    <p id="sim-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+
+                                <!-- RECURSO-EXTERNO id="recurso-ext-2" -->
+                                <!-- Tema: Excel en manufactura y control de producción. Búsqueda sugerida: "Excel control de producción KPI manufactura tutorial" -->
+                                <div id="recurso-ext-2" class="mt-6 p-5 bg-teal-50 border border-teal-300 rounded-xl shadow-sm">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="bg-teal-200 text-teal-900 text-xs font-bold px-2 py-1 rounded-full">📹 Recurso sugerido</span>
+                                        <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2 py-1 rounded-full">⏳ URL pendiente</span>
+                                    </div>
+                                    <p class="text-teal-900 font-semibold mb-1">Excel para el control de la producción</p>
+                                    <p class="text-slate-600 text-sm mb-4">🔍 Búsqueda sugerida: <em>"Excel control de producción KPI manufactura tutorial"</em></p>
+                                    <a href="#" target="_blank"
+                                       class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors text-sm opacity-50 cursor-not-allowed">
+                                        <span>▶️</span> Ver recurso
+                                    </a>
+                                    <div class="mt-4 p-3 bg-teal-100 border border-teal-300 rounded-lg">
+                                        <p class="text-teal-900 text-xs font-bold mb-1">Cómo activar este recurso:</p>
+                                        <p class="text-teal-800 text-xs mb-2">Busca el video o recurso y dile esto a tu agente de IA:</p>
+                                        <div class="bg-white border border-teal-300 rounded p-2 text-xs text-slate-700 italic select-all">
+                                            "Encontré un recurso para el recurso-ext-2 del OVA. Actualízalo con esta URL: [URL] y ponle el título: [título]."
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 4: Operadores aritméticos y de comparación -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-4">
+                            <span>4. Operadores: calcular y comparar</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-4" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-4-contenido" class="content-section">
+                                <p class="mb-4">
+                                    En Excel, <code>+ - * /</code> son los operadores aritméticos básicos. Pero también necesitamos <strong>comparar</strong>: ¿la producción alcanzó la meta? ¿el inventario está por debajo del mínimo? Para eso existen <code>&gt; &lt; &gt;= &lt;= = &lt;&gt;</code>.
+                                </p>
+                                <p class="mb-4">
+                                    Cuando comparamos, el resultado no es un número sino <strong>VERDADERO</strong> o <strong>FALSO</strong>. Esta lógica es el primer paso hacia la toma de decisiones automatizada en planta.
+                                </p>
+                                <div class="overflow-x-auto mb-4">
+                                    <table class="min-w-full text-sm border border-slate-200">
+                                        <thead class="bg-teal-100 text-teal-900">
+                                            <tr>
+                                                <th class="p-2 text-left border border-slate-200">Operador</th>
+                                                <th class="p-2 text-left border border-slate-200">Significado</th>
+                                                <th class="p-2 text-left border border-slate-200">Ejemplo industrial</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200 font-mono">+</td><td class="p-2 border border-slate-200">Suma</td><td class="p-2 border border-slate-200">Total de cajas recibidas en dos días</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200 font-mono">-</td><td class="p-2 border border-slate-200">Resta</td><td class="p-2 border border-slate-200">Unidades remanentes tras un despacho</td></tr>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200 font-mono">*</td><td class="p-2 border border-slate-200">Multiplicación</td><td class="p-2 border border-slate-200">Piezas necesarias por cantidad de productos</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200 font-mono">/</td><td class="p-2 border border-slate-200">División</td><td class="p-2 border border-slate-200">Producción promedio por hora</td></tr>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200 font-mono">&gt;=</td><td class="p-2 border border-slate-200">Mayor o igual que</td><td class="p-2 border border-slate-200">¿La producción cumplió la meta?</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Actividad: ¿Meta alcanzada?</p>
+                                    <p class="text-slate-600 text-sm mb-3">Selecciona el operador correcto para saber si una producción cumple o supera una meta. Gana 15 puntos por acierto.</p>
+                                    <div class="space-y-3" id="comparacion-ejercicios">
+                                        <div class="bg-white p-3 rounded border border-slate-200">
+                                            <p class="text-sm mb-2">Producción: <strong>530</strong>, Meta: <strong>500</strong>. ¿Cumple o supera la meta?</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="correct" data-ex="1">A2 &gt;= B2</button>
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="1">A2 &lt; B2</button>
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="1">A2 + B2</button>
+                                            </div>
+                                            <p class="comp-feedback mt-1 text-sm font-semibold"></p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded border border-slate-200">
+                                            <p class="text-sm mb-2">Stock: <strong>120</strong>, Mínimo: <strong>100</strong>. ¿El stock es mayor que el mínimo?</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="2">A2 &lt;= B2</button>
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="correct" data-ex="2">A2 &gt; B2</button>
+                                                <button class="op-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="2">A2 &lt;&gt; B2</button>
+                                            </div>
+                                            <p class="comp-feedback mt-1 text-sm font-semibold"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 5: Diagramas de flujo -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-5">
+                            <span>5. Representar visualmente una solución</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-5" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-5-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Un <strong>diagrama de flujo</strong> representa la secuencia de acciones con símbolos y conexiones. Es una herramienta estándar en ingeniería para documentar procesos, validar procedimientos y comunicar soluciones sin depender de un lenguaje de programación específico.
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 text-center">
+                                        <div class="inline-block w-16 h-10 rounded-full border-2 border-teal-600 bg-teal-50 mb-2"></div>
+                                        <p class="font-bold text-teal-900 text-sm">Inicio / Fin</p>
+                                        <p class="text-xs text-slate-600">Óvalo</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 text-center">
+                                        <div class="inline-block w-16 h-10 border-2 border-teal-600 bg-teal-50 mb-2"></div>
+                                        <p class="font-bold text-teal-900 text-sm">Entrada / Salida</p>
+                                        <p class="text-xs text-slate-600">Paralelogramo</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200 text-center">
+                                        <div class="inline-block w-16 h-10 border-2 border-teal-600 bg-teal-50 mb-2" style="clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);"></div>
+                                        <p class="font-bold text-teal-900 text-sm">Proceso</p>
+                                        <p class="text-xs text-slate-600">Rectángulo</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Actividad: Elige el símbolo correcto</p>
+                                    <p class="text-slate-600 text-sm mb-3">Para cada paso del algoritmo de producción promedio, selecciona el símbolo adecuado. Gana 10 puntos por acierto.</p>
+                                    <div class="space-y-3" id="diagrama-ejercicios">
+                                        <div class="bg-white p-3 rounded border border-slate-200">
+                                            <p class="text-sm mb-2">Paso: <strong>Inicio</strong></p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="correct" data-ex="1">Óvalo</button>
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="1">Rectángulo</button>
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="1">Paralelogramo</button>
+                                            </div>
+                                            <p class="sym-feedback mt-1 text-sm font-semibold"></p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded border border-slate-200">
+                                            <p class="text-sm mb-2">Paso: <strong>Dividir unidades entre horas</strong></p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="2">Paralelogramo</button>
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="correct" data-ex="2">Rectángulo</button>
+                                                <button class="sym-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm hover:bg-rose-50" data-answer="wrong" data-ex="2">Óvalo</button>
+                                            </div>
+                                            <p class="sym-feedback mt-1 text-sm font-semibold"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECCIÓN: ACTIVIDADES -->
+            <div id="actividades" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-2">Misiones de aprendizaje</h2>
+                <p class="text-slate-600 mb-6">Completa las misiones, acumula puntos y desbloquea la insignia de <strong>Ingeniero de Soluciones</strong>.</p>
+
+                <!-- Progreso de misiones -->
+                <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-teal-900">Progreso</span>
+                        <span id="misiones-progreso" class="text-rose-600 font-bold">0/3</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-3">
+                        <div id="misiones-barra" class="bg-teal-600 h-3 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Actividad 1 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 1: De problema a algoritmo</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">
+                            Un almacén recibió 200 cajas el lunes y 150 el martes. El jefe de operaciones quiere saber el total de cajas recibidas y, además, si superan las 300 cajas de seguridad. Construye el algoritmo.
+                        </p>
+                        <div class="space-y-3 mb-4" id="mision-1">
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-teal-900 mb-2">1. Selecciona la entrada correcta:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="1" data-a="correct">200 y 150 cajas</button>
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="1" data-a="wrong">350 cajas</button>
+                                </div>
+                                <p class="m1-feedback mt-1 text-sm font-semibold"></p>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-teal-900 mb-2">2. Selecciona el proceso correcto:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="2" data-a="wrong">200 - 150</button>
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="2" data-a="correct">200 + 150</button>
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="2" data-a="wrong">200 / 150</button>
+                                </div>
+                                <p class="m1-feedback mt-1 text-sm font-semibold"></p>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-teal-900 mb-2">3. Compara con la meta de seguridad:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="3" data-a="correct">Total &gt; 300</button>
+                                    <button class="m1-btn bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-q="3" data-a="wrong">Total &lt; 300</button>
+                                </div>
+                                <p class="m1-feedback mt-1 text-sm font-semibold"></p>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> Escribe en tu cuaderno el algoritmo con sus cuatro pasos y la fórmula de Excel correspondiente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Actividad 2 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">⚙️ Misión 2: Simulador de indicadores</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">
+                            Una empresa fabricó 720 unidades en 8 horas. El costo de materiales fue de $1.500.000 para 300 unidades de un lote. Calcula la productividad por hora y el costo de materiales por unidad.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Unidades</label>
+                                <input id="m2-unidades" type="number" value="720" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Horas</label>
+                                <input id="m2-horas" type="number" value="8" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Costo materiales ($)</label>
+                                <input id="m2-costo" type="number" value="1500000" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Unidades del lote</label>
+                                <input id="m2-lote" type="number" value="300" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                        </div>
+                        <button id="m2-calcular" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors mb-3">Calcular indicadores</button>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm text-slate-600">Productividad</p>
+                                <p id="m2-prod" class="text-xl font-bold text-teal-900">—</p>
+                                <p class="text-xs text-slate-500">unidades/hora</p>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm text-slate-600">Costo unitario</p>
+                                <p id="m2-costou" class="text-xl font-bold text-teal-900">—</p>
+                                <p class="text-xs text-slate-500">$/unidad</p>
+                            </div>
+                        </div>
+                        <p id="m2-feedback" class="text-sm font-semibold"></p>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> Captura de pantalla o descripción de las celdas y fórmulas usadas en Excel.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Actividad 3 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">🧩 Misión 3: El diagrama correcto</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">
+                            Ordena los símbolos para representar el algoritmo: calcular el total de cajas recibidas y verificar si superan la meta.
+                        </p>
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200 mb-4">
+                            <p class="text-sm font-semibold text-teal-900 mb-2">Ordena los pasos (haz clic en el orden correcto):</p>
+                            <div class="flex flex-wrap gap-2" id="m3-pasos">
+                                <button class="m3-paso bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-step="2">Proceso: sumar cajas</button>
+                                <button class="m3-paso bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-step="1">Inicio</button>
+                                <button class="m3-paso bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-step="4">Salida: total y decisión</button>
+                                <button class="m3-paso bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-step="3">Decisión: ¿total &gt; 300?</button>
+                                <button class="m3-paso bg-white border border-slate-300 px-3 py-1 rounded text-sm" data-step="5">Fin</button>
+                            </div>
+                            <p class="mt-2 text-sm text-slate-600">Secuencia seleccionada: <span id="m3-secuencia" class="font-mono text-teal-900"></span></p>
+                            <button id="m3-verificar" class="mt-2 bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Verificar secuencia</button>
+                            <p id="m3-feedback" class="mt-2 text-sm font-semibold"></p>
+                        </div>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> Dibuja en papel o en una herramienta el diagrama de flujo resultante.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECCIÓN: EVALUACIÓN -->
+            <div id="evaluacion" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-2">Evaluación</h2>
+                <p class="text-slate-600 mb-4">Responde las 5 preguntas de dificultad progresiva. Selecciona una opción por pregunta.</p>
+                <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6 flex items-center justify-between">
+                    <p class="text-teal-900 font-bold">Puntos de evaluación: <span id="quiz-puntos" class="text-rose-600 text-2xl">0</span>/5</p>
+                    <span id="quiz-insignia" class="text-2xl hidden">🏅</span>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-slate-600 mb-6">Selecciona la respuesta correcta para cada pregunta.</p>
+                    <div id="quiz-container"></div>
+                    <button id="submit-quiz-btn" class="mt-6 bg-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-700 transition-colors">Finalizar evaluación</button>
+                    <div id="quiz-result" class="mt-4 text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: RECURSOS -->
+            <div id="recursos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Recursos</h2>
+                <ul class="space-y-6">
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Microsoft Learn — Introducción a Excel</h3>
+                            <p class="text-slate-600 mb-2">Manual oficial para comprender el entorno de Excel, celdas y fórmulas básicas.</p>
+                            <a href="https://learn.microsoft.com/es-es/training/modules/intro-to-excel/" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-1.png" alt="QR Microsoft Learn" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">PSeInt — Ejercicios de algoritmos</h3>
+                            <p class="text-slate-600 mb-2">Repositorio de ejercicios para practicar la lógica de algoritmos antes de pasar a un lenguaje de programación.</p>
+                            <a href="http://pseint.sourceforge.net/" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-2.png" alt="QR PSeInt" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Khan Academy — Pensamiento computacional</h3>
+                            <p class="text-slate-600 mb-2">Actividades para desarrollar el pensamiento computacional y la resolución de problemas.</p>
+                            <a href="https://es.khanacademy.org/computing/computer-science" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-3.png" alt="QR Khan Academy" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Anexo: plantilla de Excel</h3>
+                            <p class="text-slate-600 mb-2">Plantilla para practicar operadores aritméticos y de comparación con casos industriales.</p>
+                            <a href="img/plantilla-excel.xlsx" target="_blank" class="underline text-slate-700 hover:text-teal-700">Descargar anexo</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-4.png" alt="QR Plantilla Excel" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SECCIÓN: BIBLIOGRAFÍA -->
+            <div id="bibliografia" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Bibliografía</h2>
+                <ul class="space-y-4 bg-white p-6 rounded-lg shadow-md">
+                    <li class="text-slate-700 leading-relaxed">
+                        Joyanes Aguilar, L. (2008). <em>Fundamentos de programación: algoritmos, estructura de datos y objetos</em> (4ª ed.). McGraw-Hill.
+                    </li>
+                    <li class="text-slate-700 leading-relaxed">
+                        Gaddis, T. (2015). <em>Starting Out with Programming Logic and Design</em> (4ª ed.). Pearson.
+                    </li>
+                    <li class="text-slate-700 leading-relaxed">
+                        Microsoft. (2024). <em>Operadores de cálculo y prioridad en Excel</em>. Microsoft Support. https://support.microsoft.com/es-es/excel/calculation-operators-and-precedence
+                    </li>
+                    <li class="text-slate-700 leading-relaxed">
+                        Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2009). <em>Introduction to Algorithms</em> (3ª ed.). MIT Press.
+                    </li>
+                    <li class="text-slate-700 leading-relaxed">
+                        Rockwell Automation. (2024). <em>Implementos Pacur, MES digitalizado en tiempo real</em>. https://www.rockwellautomation.com/es-mx/company/news/case-studies/plastics-extruder-mes.html
+                    </li>
+                </ul>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="mt-12 pt-8 pb-8 bg-slate-900 text-center rounded-t-2xl">
+                <p class="text-slate-300 font-medium text-sm">Es creado por</p>
+                <p class="text-white font-bold text-xl mt-1">Ing. Ivan D. Mejia Segura</p>
+                <p class="text-rose-400 text-sm mt-2">Recurso Educativo Digital</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Navegación por pestañas inferiores
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.dataset.target;
+                document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // Acordeones
+        document.querySelectorAll('.accordion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const panel = document.querySelector(targetId);
+                const icon = this.querySelector('span:last-child');
+                if (panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    icon.textContent = '➖';
+                } else {
+                    panel.classList.add('hidden');
+                    icon.textContent = '➕';
+                }
+            });
+        });
+
+        // Sistema de puntos e insignias
+        let puntos = 0;
+        const insignias = new Set();
+        function sumarPuntos(cantidad) {
+            puntos += cantidad;
+            document.getElementById('puntos-total').textContent = puntos;
+            if (puntos >= 100 && !insignias.has('bronze')) {
+                insignias.add('bronze');
+                document.getElementById('insignias').innerHTML += ' 🥉';
+            }
+            if (puntos >= 200 && !insignias.has('silver')) {
+                insignias.add('silver');
+                document.getElementById('insignias').innerHTML += ' 🥈';
+            }
+        }
+
+        // Actividad: Clasifica el flujo (drag & drop simplificado)
+        const draggables = document.querySelectorAll('.draggable-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        let draggedItem = null;
+
+        draggables.forEach(item => {
+            item.addEventListener('dragstart', function() { draggedItem = this; });
+            item.addEventListener('dragend', function() { draggedItem = null; });
+            item.addEventListener('click', function() {
+                if (!draggedItem) {
+                    draggedItem = this;
+                } else {
+                    // Si ya hay uno seleccionado, colocarlo en la zona clickeada no aplica sin zona
+                    draggedItem.classList.remove('ring-2', 'ring-rose-500');
+                    draggedItem = null;
+                }
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                if (draggedItem) {
+                    this.appendChild(draggedItem);
+                    draggedItem.classList.remove('ring-2', 'ring-rose-500');
+                    draggedItem = null;
+                }
+            });
+            zone.addEventListener('click', function() {
+                if (draggedItem) {
+                    this.appendChild(draggedItem);
+                    draggedItem.classList.remove('ring-2', 'ring-rose-500');
+                    draggedItem = null;
+                }
+            });
+        });
+
+        document.getElementById('verificar-eps').addEventListener('click', function() {
+            const zones = { entrada: [], proceso: [], salida: [] };
+            dropZones.forEach(zone => {
+                const type = zone.dataset.zone;
+                zone.querySelectorAll('.draggable-item').forEach(item => {
+                    zones[type].push(item.dataset.value);
+                });
+            });
+            const correctEntrada = zones.entrada.every(v => v === 'entrada') && zones.entrada.length === 2;
+            const correctProceso = zones.proceso.every(v => v === 'proceso') && zones.proceso.length === 2;
+            const correctSalida = zones.salida.every(v => v === 'salida') && zones.salida.length === 1;
+            const feedback = document.getElementById('eps-feedback');
+            if (correctEntrada && correctProceso && correctSalida) {
+                feedback.textContent = '¡Correcto! Has clasificado el flujo. +15 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(15);
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'Revisa: recuerda que Entrada son los datos, Proceso las operaciones y Salida el resultado.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+            }
+        });
+
+        // Actividad: Ordena el algoritmo
+        const pasosOrden = document.querySelectorAll('.paso-orden');
+        let selectedOrder = [];
+        pasosOrden.forEach(paso => {
+            paso.addEventListener('click', function() {
+                const order = this.dataset.order;
+                if (!selectedOrder.includes(order)) {
+                    selectedOrder.push(order);
+                    this.classList.add('bg-rose-100', 'border-rose-500');
+                    this.textContent = selectedOrder.length + '. ' + this.textContent.replace(/^\d+\.\s*/, '');
+                }
+            });
+        });
+
+        document.getElementById('verificar-orden').addEventListener('click', function() {
+            const feedback = document.getElementById('orden-feedback');
+            if (selectedOrder.join(',') === '1,2,3,4') {
+                feedback.textContent = '¡Secuencia correcta! +20 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(20);
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'El orden no es correcto. Piensa: primero necesito los datos, luego proceso y luego muestro el resultado.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+                selectedOrder = [];
+                pasosOrden.forEach(p => {
+                    p.classList.remove('bg-rose-100', 'border-rose-500');
+                    p.textContent = p.textContent.replace(/^\d+\.\s*/, '');
+                });
+            }
+        });
+
+        // Actividad: Simulador de productividad
+        document.getElementById('sim-ejecutar').addEventListener('click', function() {
+            const unidades = parseFloat(document.getElementById('sim-unidades').value);
+            const horas = parseFloat(document.getElementById('sim-horas').value);
+            const formula = document.getElementById('sim-formula').value.trim().toUpperCase();
+            const resultado = document.getElementById('sim-resultado');
+            const feedback = document.getElementById('sim-feedback');
+
+            if (formula === '=A2/B2' || formula === 'A2/B2') {
+                const res = unidades / horas;
+                resultado.textContent = res.toFixed(2);
+                feedback.textContent = '¡Fórmula correcta! +25 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(25);
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'No es la fórmula adecuada. La productividad por hora se calcula dividiendo unidades entre horas.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+                resultado.textContent = '—';
+            }
+        });
+
+        // Actividad: Comparadores
+        document.querySelectorAll('.op-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const ex = this.dataset.ex;
+                const answer = this.dataset.answer;
+                const container = this.closest('div');
+                const feedback = container.querySelector('.comp-feedback');
+                if (answer === 'correct') {
+                    feedback.textContent = '¡Correcto! +15 puntos';
+                    feedback.className = 'comp-feedback mt-1 text-sm font-semibold text-green-700';
+                    sumarPuntos(15);
+                    container.querySelectorAll('.op-btn').forEach(b => b.disabled = true);
+                } else {
+                    feedback.textContent = 'Revisa el operador. ¿Qué relación debe cumplirse?';
+                    feedback.className = 'comp-feedback mt-1 text-sm font-semibold text-red-600';
+                }
+            });
+        });
+
+        // Actividad: Diagrama de flujo
+        document.querySelectorAll('.sym-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const ex = this.dataset.ex;
+                const answer = this.dataset.answer;
+                const container = this.closest('div');
+                const feedback = container.querySelector('.sym-feedback');
+                if (answer === 'correct') {
+                    feedback.textContent = '¡Correcto! +10 puntos';
+                    feedback.className = 'sym-feedback mt-1 text-sm font-semibold text-green-700';
+                    sumarPuntos(10);
+                    container.querySelectorAll('.sym-btn').forEach(b => b.disabled = true);
+                } else {
+                    feedback.textContent = 'Revisa el símbolo. ¿Representa inicio, proceso o entrada/salida?';
+                    feedback.className = 'sym-feedback mt-1 text-sm font-semibold text-red-600';
+                }
+            });
+        });
+
+        // Misiones de actividades
+        const misionesCompletadas = { 1: false, 2: false, 3: false };
+        function actualizarProgreso() {
+            const completadas = Object.values(misionesCompletadas).filter(v => v).length;
+            document.getElementById('misiones-progreso').textContent = completadas + '/3';
+            document.getElementById('misiones-barra').style.width = (completadas / 3 * 100) + '%';
+            if (completadas === 3) {
+                document.getElementById('insignias').innerHTML += ' 🏆';
+            }
+        }
+
+        // Misión 1
+        let m1Correctas = 0;
+        document.querySelectorAll('.m1-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const q = this.dataset.q;
+                const answer = this.dataset.a;
+                const container = this.closest('div');
+                const feedback = container.querySelector('.m1-feedback');
+                if (answer === 'correct') {
+                    feedback.textContent = '¡Correcto!';
+                    feedback.className = 'm1-feedback mt-1 text-sm font-semibold text-green-700';
+                    m1Correctas++;
+                    if (m1Correctas === 3) {
+                        sumarPuntos(30);
+                        misionesCompletadas[1] = true;
+                        actualizarProgreso();
+                    }
+                } else {
+                    feedback.textContent = 'No es la opción correcta. Piensa en la lógica del problema.';
+                    feedback.className = 'm1-feedback mt-1 text-sm font-semibold text-red-600';
+                }
+                container.querySelectorAll('.m1-btn').forEach(b => b.disabled = true);
+            });
+        });
+
+        // Misión 2
+        document.getElementById('m2-calcular').addEventListener('click', function() {
+            const unidades = parseFloat(document.getElementById('m2-unidades').value);
+            const horas = parseFloat(document.getElementById('m2-horas').value);
+            const costo = parseFloat(document.getElementById('m2-costo').value);
+            const lote = parseFloat(document.getElementById('m2-lote').value);
+
+            const prod = unidades / horas;
+            const costoU = costo / lote;
+
+            document.getElementById('m2-prod').textContent = prod.toFixed(2);
+            document.getElementById('m2-costou').textContent = costoU.toFixed(2);
+            document.getElementById('m2-feedback').textContent = '¡Indicadores calculados! +30 puntos';
+            document.getElementById('m2-feedback').className = 'text-sm font-semibold text-green-700';
+            sumarPuntos(30);
+            misionesCompletadas[2] = true;
+            actualizarProgreso();
+            this.disabled = true;
+        });
+
+        // Misión 3
+        let m3Secuencia = [];
+        document.querySelectorAll('.m3-paso').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const step = this.dataset.step;
+                if (!m3Secuencia.includes(step)) {
+                    m3Secuencia.push(step);
+                    document.getElementById('m3-secuencia').textContent = m3Secuencia.join(' → ');
+                    this.classList.add('bg-rose-100', 'border-rose-500');
+                }
+            });
+        });
+
+        document.getElementById('m3-verificar').addEventListener('click', function() {
+            const feedback = document.getElementById('m3-feedback');
+            if (m3Secuencia.join(',') === '1,2,3,4,5') {
+                feedback.textContent = '¡Secuencia perfecta! +30 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(30);
+                misionesCompletadas[3] = true;
+                actualizarProgreso();
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'La secuencia no es correcta. Recuerda: inicio, entrada/proceso, decisión, salida, fin.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+                m3Secuencia = [];
+                document.getElementById('m3-secuencia').textContent = '';
+                document.querySelectorAll('.m3-paso').forEach(b => b.classList.remove('bg-rose-100', 'border-rose-500'));
+            }
+        });
+    </script>
+
+    <!-- QUIZ -->
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué representa la 'entrada' en la estructura Entrada → Proceso → Salida?",
+                options: ["El resultado final", "La información disponible para resolver el problema", "La operación que se realiza", "El diagrama de flujo"],
+                correct: 1
+            },
+            {
+                question: "En Excel, ¿qué operador se usa para multiplicar dos celdas?",
+                options: ["x", "*", "/", "&"],
+                correct: 1
+            },
+            {
+                question: "Una planta produjo 600 unidades en 10 horas. ¿Cuál es la fórmula correcta en Excel para obtener la producción por hora?",
+                options: ["=A2+B2", "=A2-B2", "=A2/B2", "=A2*B2"],
+                correct: 2
+            },
+            {
+                question: "Si la producción real está en A2 y la meta en B2, ¿qué fórmula indica si se cumplió o superó la meta?",
+                options: ["=A2<B2", "=A2>=B2", "=A2+B2", "=A2*B2"],
+                correct: 1
+            },
+            {
+                question: "En un diagrama de flujo, ¿qué símbolo representa una operación o cálculo?",
+                options: ["Óvalo", "Paralelogramo", "Rectángulo", "Rombo"],
+                correct: 2
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.classList.add('mb-6');
+            div.innerHTML = `
+                <p class="font-semibold text-slate-800 mb-3">${index + 1}. ${item.question}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 options-grid">
+                    ${item.options.map((opt, i) => `
+                        <div class="quiz-option border-2 border-slate-200 rounded-lg p-3 cursor-pointer transition-colors"
+                             data-question="${index}" data-option="${i}">
+                            <span class="font-medium text-rose-600 mr-2">${String.fromCharCode(65+i)}.</span> ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            quizContainer.appendChild(div);
+        });
+
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                const q = this.dataset.question;
+                document.querySelectorAll(`[data-question="${q}"]`).forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('submit-quiz-btn').addEventListener('click', () => {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`.quiz-option.selected[data-question="${index}"]`);
+                if (selected && parseInt(selected.dataset.option) === item.correct) score++;
+            });
+            const result = document.getElementById('quiz-result');
+            const pct = Math.round((score / quizData.length) * 100);
+            result.textContent = `Obtuviste ${score} de ${quizData.length} (${pct}%)`;
+            result.className = `mt-4 text-lg font-bold ${pct >= 60 ? 'text-teal-900' : 'text-red-600'}`;
+            document.getElementById('quiz-puntos').textContent = score;
+            if (score === quizData.length) {
+                document.getElementById('quiz-insignia').classList.remove('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>
