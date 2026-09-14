@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVA: Condiciones compuestas — operadores lógicos Y y O</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        html {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        main {
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+        @media (max-width: 767px) {
+            main {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+            * { box-sizing: border-box; }
+            body, html, main, .accordion-panel, .content-section {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
+            pre { overflow-x: auto; max-width: 100%; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+            h4 { font-size: 1.125rem !important; }
+            .accordion-panel {
+                overflow-x: hidden;
+                max-width: 100%;
+                padding: 0.5rem !important;
+            }
+            .content-section {
+                overflow-x: hidden;
+                max-width: 100%;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+        .nav-tab {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .nav-tab.active, .nav-tab:hover {
+            background-color: #115e59;
+            color: #ffffff;
+            border-radius: 0.5rem;
+        }
+        .content-pane {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-pane.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .quiz-option:hover { background-color: #fff1f2; }
+        .quiz-option.selected {
+            background-color: #ffe4e6;
+            border-color: #f43f5e;
+        }
+        .accordion-btn { cursor: pointer; }
+        .accordion-panel { transition: all 0.3s ease; }
+        .code-chip {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="min-h-screen bg-slate-50">
+
+        <!-- ENCABEZADO SUPERIOR -->
+        <header class="bg-slate-900 shadow-2xl text-slate-100">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+                <img src="img/logo.svg" alt="Logo" class="h-10 w-10 rounded-lg bg-white p-1">
+                <span class="font-bold text-white text-lg">Condiciones compuestas: Y y O — Algoritmia y Programación</span>
+            </div>
+        </header>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-100 border-t border-slate-700 z-50">
+            <div class="max-w-6xl mx-auto flex justify-around items-center h-16 overflow-x-auto">
+                <button class="nav-tab active flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="introduccion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="hidden sm:inline">Intro</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="objetivos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span class="hidden sm:inline">Objetivos</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="contenido">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="hidden sm:inline">Contenido</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="actividades">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="hidden sm:inline">Actividades</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="evaluacion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="hidden sm:inline">Evaluación</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="recursos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    <span class="hidden sm:inline">Recursos</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="p-4 sm:p-6 md:p-10 max-w-6xl mx-auto pb-24">
+
+            <!-- SECCIÓN: INTRODUCCIÓN -->
+            <div id="introduccion" class="content-pane active">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-4">Cuando una sola condición ya no es suficiente</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    En una planta industrial casi ninguna decisión depende de un único dato. Una máquina no se detiene solo por temperatura: también importa la presión, la vibración o el estado de la guarda de seguridad. Un pedido no se marca como prioritario solo por el retraso: también pesa el tipo de cliente. Un lote no se libera solo por el porcentaje de defectos: también debe pasar la inspección dimensional.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Ya conoces las condiciones simples y los operadores de comparación. En este OVA darás el siguiente paso: <strong>combinar varias condiciones con los operadores lógicos <code class="code-chip">Y</code> y <code class="code-chip">O</code></strong> para construir reglas de decisión completas, exactamente como lo hacen los sistemas de enclavamiento, las alarmas de proceso y los controles de calidad en la industria real.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    La ruta de trabajo será: <strong>REGLA → CONDICIONES SIMPLES → OPERADOR LÓGICO → CONDICIÓN COMPUESTA → DECISIÓN → PRUEBA</strong>.
+                </p>
+                <div class="mt-8 p-4 sm:p-6 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg">
+                    <p class="text-teal-900">
+                        <span class="text-xl">✨</span> Al finalizar serás capaz de traducir reglas escritas en lenguaje natural a condiciones compuestas correctas, evaluarlas con datos reales y detectar los errores más frecuentes. <span class="text-xl">🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: OBJETIVOS -->
+            <div id="objetivos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Objetivos de aprendizaje</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🔍</span>
+                        <span>Reconocer cuándo una decisión requiere más de una condición.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">⚖️</span>
+                        <span>Diferenciar el comportamiento de los operadores lógicos <code class="code-chip">Y</code> y <code class="code-chip">O</code>.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🧩</span>
+                        <span>Construir condiciones compuestas a partir de reglas escritas en lenguaje natural.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🧮</span>
+                        <span>Evaluar condiciones compuestas con distintos valores de las variables.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🛠️</span>
+                        <span>Identificar errores frecuentes en expresiones lógicas.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🏭</span>
+                        <span>Aplicar condiciones compuestas en un problema sencillo de toma de decisiones.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SECCIÓN: CONTENIDO -->
+            <div id="contenido" class="content-pane">
+                <div class="w-full max-w-8xl mx-auto">
+
+                    <!-- Gamificación -->
+                    <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="text-teal-900 font-bold">🏆 Puntos acumulados: <span id="puntos-total" class="text-rose-600 text-2xl">0</span></p>
+                            <p class="text-slate-600 text-sm">Resuelve los retos de cada acordeón y gana insignias.</p>
+                        </div>
+                        <div id="insignias" class="flex gap-2 text-2xl"></div>
+                    </div>
+
+                    <!-- ACORDEÓN 1: Situación inicial -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-1">
+                            <span>1. El problema: una condición no alcanza</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-1" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-1-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Una <strong>condición simple</strong> evalúa una sola relación: <code class="code-chip">temperatura &lt;= 90</code>. Pero muchas reglas industriales exigen verificar <strong>varias relaciones a la vez</strong>. Una <strong>condición compuesta</strong> une dos o más condiciones simples mediante operadores lógicos:
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 items-center text-center">
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                                        <p class="text-xs font-bold text-teal-900 mb-1">Condición 1</p>
+                                        <p class="code-chip text-sm">temperatura &lt;= 90</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                                        <p class="text-xs font-bold text-teal-900 mb-1">Condición 2</p>
+                                        <p class="code-chip text-sm">presion &lt;= 120</p>
+                                    </div>
+                                    <div class="bg-rose-50 p-4 rounded-lg border border-rose-300">
+                                        <p class="text-xs font-bold text-rose-700 mb-1">Condición compuesta</p>
+                                        <p class="code-chip text-sm">temperatura &lt;= 90 <strong>Y</strong> presion &lt;= 120</p>
+                                    </div>
+                                </div>
+                                <p class="mb-4">
+                                    <strong>Idea central:</strong> los operadores lógicos permiten combinar condiciones para representar reglas más completas. En la industria, esto aparece en los <em>enclavamientos</em> (interlocks): la máquina solo arranca si <em>todas</em> las condiciones de seguridad se cumplen.
+                                </p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto: ¿Puede operar la máquina?</p>
+                                    <p class="text-slate-600 text-sm mb-3">Una máquina puede operar únicamente cuando la temperatura es ≤ 90 °C <strong>y</strong> la presión es ≤ 120. Lecturas actuales: <strong>temperatura = 85 °C</strong>, <strong>presión = 125</strong>. Gana 10 puntos.</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="reto1-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">Sí, puede operar</button>
+                                        <button class="reto1-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="correct">No, debe detenerse</button>
+                                        <button class="reto1-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">No hay información suficiente</button>
+                                    </div>
+                                    <p id="reto1-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 2: Operador Y -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-2">
+                            <span>2. Operador Y: todas deben cumplirse</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-2" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-2-contenido" class="content-section">
+                                <p class="mb-4">
+                                    El operador <code class="code-chip font-bold">Y</code> exige que <strong>todas</strong> las condiciones sean verdaderas. Es el operador de los <strong>enclavamientos de seguridad</strong>: una prensa solo cierra si la guarda está abajo <em>y</em> las dos manos del operario están en los botones; un horno solo enciende si hay pieza detectada <em>y</em> la puerta está sellada.
+                                </p>
+                                <p class="mb-4">Regla: <code class="code-chip">temperatura &lt;= 90 Y presion &lt;= 120</code></p>
+                                <div class="overflow-x-auto mb-4">
+                                    <table class="min-w-full text-sm border border-slate-200">
+                                        <thead class="bg-teal-100 text-teal-900">
+                                            <tr>
+                                                <th class="p-2 text-left border border-slate-200">Temperatura</th>
+                                                <th class="p-2 text-left border border-slate-200">Presión</th>
+                                                <th class="p-2 text-left border border-slate-200">T ≤ 90</th>
+                                                <th class="p-2 text-left border border-slate-200">P ≤ 120</th>
+                                                <th class="p-2 text-left border border-slate-200">Resultado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200">85</td><td class="p-2 border border-slate-200">110</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200 font-bold text-green-700">Verdadero</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200">95</td><td class="p-2 border border-slate-200">110</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200 font-bold text-red-600">Falso</td></tr>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200">85</td><td class="p-2 border border-slate-200">125</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200 font-bold text-red-600">Falso</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200">95</td><td class="p-2 border border-slate-200">125</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200 font-bold text-red-600">Falso</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="mb-4"><strong>Conclusión:</strong> con <code class="code-chip">Y</code>, una sola condición falsa hace falsa toda la expresión.</p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto: selecciona el operador</p>
+                                    <p class="text-slate-600 text-sm mb-1">Para liberar un lote se requiere que <strong>ambas</strong> cosas se cumplan:</p>
+                                    <ul class="list-disc list-inside text-slate-600 text-sm mb-3">
+                                        <li>porcentaje de defectos ≤ 4 %</li>
+                                        <li>cumplimiento dimensional = verdadero</li>
+                                    </ul>
+                                    <p class="text-slate-700 text-sm font-semibold mb-2">¿Qué operador debe usarse? Gana 15 puntos.</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="reto2-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="correct">Y</button>
+                                        <button class="reto2-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">O</button>
+                                    </div>
+                                    <p id="reto2-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+
+                                <div class="mt-4 p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🧪 Laboratorio de enclavamiento</p>
+                                    <p class="text-slate-600 text-sm mb-3">Cambia los valores y observa cómo responde la regla <code class="code-chip">temperatura &lt;= 90 Y presion &lt;= 120</code>.</p>
+                                    <div class="grid grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <label class="text-xs font-semibold text-teal-900">Temperatura (°C)</label>
+                                            <input id="lab-temp" type="number" value="85" class="w-full border border-slate-300 rounded p-2 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-semibold text-teal-900">Presión</label>
+                                            <input id="lab-pres" type="number" value="125" class="w-full border border-slate-300 rounded p-2 text-sm">
+                                        </div>
+                                    </div>
+                                    <button id="lab-evaluar" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Evaluar</button>
+                                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
+                                        <div class="bg-white p-2 rounded border border-slate-200"><p class="text-xs text-slate-500">T ≤ 90</p><p id="lab-c1" class="font-bold">—</p></div>
+                                        <div class="bg-white p-2 rounded border border-slate-200"><p class="text-xs text-slate-500">P ≤ 120</p><p id="lab-c2" class="font-bold">—</p></div>
+                                        <div class="bg-white p-2 rounded border border-slate-200"><p class="text-xs text-slate-500">¿Puede operar?</p><p id="lab-res" class="font-bold">—</p></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 3: Operador O -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-3">
+                            <span>3. Operador O: basta con una</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-3" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-3-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Cambiemos la política. Ahora la regla es de <strong>protección</strong>: la máquina debe detenerse si la temperatura supera 90 °C <strong>o</strong> la presión supera 120. Cualquiera de las dos situaciones, por sí sola, ya es peligrosa.
+                                </p>
+                                <p class="mb-4">Regla: <code class="code-chip">temperatura &gt; 90 O presion &gt; 120</code></p>
+                                <div class="overflow-x-auto mb-4">
+                                    <table class="min-w-full text-sm border border-slate-200">
+                                        <thead class="bg-teal-100 text-teal-900">
+                                            <tr>
+                                                <th class="p-2 text-left border border-slate-200">Temperatura</th>
+                                                <th class="p-2 text-left border border-slate-200">Presión</th>
+                                                <th class="p-2 text-left border border-slate-200">T &gt; 90</th>
+                                                <th class="p-2 text-left border border-slate-200">P &gt; 120</th>
+                                                <th class="p-2 text-left border border-slate-200">¿Detener?</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200">85</td><td class="p-2 border border-slate-200">110</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200 font-bold text-green-700">Falso</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200">95</td><td class="p-2 border border-slate-200">110</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200 font-bold text-red-600">Verdadero</td></tr>
+                                            <tr class="bg-white"><td class="p-2 border border-slate-200">85</td><td class="p-2 border border-slate-200">125</td><td class="p-2 border border-slate-200">F</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200 font-bold text-red-600">Verdadero</td></tr>
+                                            <tr class="bg-slate-50"><td class="p-2 border border-slate-200">95</td><td class="p-2 border border-slate-200">125</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200">V</td><td class="p-2 border border-slate-200 font-bold text-red-600">Verdadero</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="mb-4"><strong>Conclusión:</strong> con <code class="code-chip">O</code>, basta con que una de las condiciones sea verdadera para que la expresión completa sea verdadera. Es el operador típico de <strong>alarmas y paros de emergencia</strong>: si falla cualquier sensor crítico, el sistema reacciona.</p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto: evalúa la expresión</p>
+                                    <p class="text-slate-600 text-sm mb-3">Datos: <code class="code-chip">temperatura = 92</code>, <code class="code-chip">presion = 115</code>. Expresión: <code class="code-chip">temperatura &gt; 90 O presion &gt; 120</code>. ¿Verdadero o falso? Gana 15 puntos.</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="reto3-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="correct">Verdadero</button>
+                                        <button class="reto3-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">Falso</button>
+                                    </div>
+                                    <p id="reto3-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 4: Y vs O -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-4">
+                            <span>4. Y vs O: misma información, distinta regla</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-4" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-4-contenido" class="content-section">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                    <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                                        <p class="font-bold text-teal-900 mb-1">Condición A — con <code class="code-chip">Y</code></p>
+                                        <p class="code-chip text-sm mb-2">temperatura &lt;= 90 Y presion &lt;= 120</p>
+                                        <p class="text-sm text-slate-600">Pregunta que responde: ¿se cumplen <strong>ambas</strong> condiciones?</p>
+                                    </div>
+                                    <div class="bg-rose-50 p-4 rounded-lg border border-rose-300">
+                                        <p class="font-bold text-teal-900 mb-1">Condición B — con <code class="code-chip">O</code></p>
+                                        <p class="code-chip text-sm mb-2">temperatura &gt; 90 O presion &gt; 120</p>
+                                        <p class="text-sm text-slate-600">Pregunta que responde: ¿existe <strong>al menos una</strong> condición crítica?</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mb-4 text-center">
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                                        <p class="text-3xl font-bold text-teal-900">Y</p>
+                                        <p class="text-sm font-semibold text-slate-600">→ todas</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                                        <p class="text-3xl font-bold text-rose-600">O</p>
+                                        <p class="text-sm font-semibold text-slate-600">→ al menos una</p>
+                                    </div>
+                                </div>
+                                <p class="mb-4">
+                                    <strong>Idea clave:</strong> el operador no se escoge por preferencia. <strong>Se escoge según la regla que queremos representar.</strong> Un paro de seguridad suele usar <code class="code-chip">O</code> (cualquier falla basta); un enclavamiento de arranque suele usar <code class="code-chip">Y</code> (todo debe estar en orden).
+                                </p>
+                                <p class="mb-4">
+                                    <strong>Dato complementario:</strong> cuando una expresión mezcla <code class="code-chip">Y</code> y <code class="code-chip">O</code>, <code class="code-chip">Y</code> se evalúa primero. Por eso, en reglas complejas se usan <strong>paréntesis</strong> para dejar explícito el orden: <code class="code-chip">(fallaSensor O sobrecarga) Y sistemaActivo</code>.
+                                </p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto: detecta el error</p>
+                                    <p class="text-slate-600 text-sm mb-1">Regla: <em>"La máquina se detiene cuando temperatura &gt; 90 <strong>o</strong> presión &gt; 120."</em></p>
+                                    <p class="text-slate-600 text-sm mb-3">Un estudiante escribe: <code class="code-chip">temperatura &gt; 90 Y presion &gt; 120</code>. ¿Representa correctamente la regla? Gana 15 puntos.</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="reto4-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">Sí, la representa</button>
+                                        <button class="reto4-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="correct">No, está mal</button>
+                                    </div>
+                                    <p id="reto4-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 5: Traducción desde lenguaje natural -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-5">
+                            <span>5. De la regla escrita a la expresión lógica</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-5" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-5-contenido" class="content-section">
+                                <p class="mb-4">
+                                    Lo importante no es solo evaluar condiciones ya construidas, sino <strong>construirlas</strong>. En la práctica, las reglas llegan como políticas escritas en lenguaje natural: procedimientos de calidad, criterios de prioridad, protocolos de seguridad. Tu trabajo es traducirlas sin ambigüedad.
+                                </p>
+                                <div class="space-y-3 mb-4">
+                                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                        <p class="text-sm text-slate-600 mb-1">📋 <em>"Un pedido se considera prioritario cuando el retraso supera 24 horas <strong>y</strong> el cliente es estratégico."</em></p>
+                                        <p class="code-chip text-sm text-teal-900">retraso &gt; 24 Y clienteEstrategico = Verdadero</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                        <p class="text-sm text-slate-600 mb-1">📋 <em>"Un lote debe rechazarse si existe defecto crítico <strong>o</strong> el porcentaje de defectos supera 8 %."</em></p>
+                                        <p class="code-chip text-sm text-teal-900">defectoCritico = Verdadero O porcentajeDefectos &gt; 8</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                        <p class="text-sm text-slate-600 mb-1">📋 <em>"Una máquina puede continuar operando si la carga no supera 80 % <strong>y</strong> la vibración no supera 4."</em></p>
+                                        <p class="code-chip text-sm text-teal-900">carga &lt;= 80 Y vibracion &lt;= 4</p>
+                                    </div>
+                                </div>
+                                <p class="mb-4"><strong>Pista de traducción:</strong> las palabras <em>y</em>, <em>además</em>, <em>ambas</em>, <em>también</em> suelen indicar <code class="code-chip">Y</code>; las palabras <em>o</em>, <em>cualquiera</em>, <em>al menos una</em> suelen indicar <code class="code-chip">O</code>. Ojo con "no supera": significa <code class="code-chip">&lt;=</code>, no <code class="code-chip">&lt;</code>.</p>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto: construye la expresión</p>
+                                    <p class="text-slate-600 text-sm mb-3">Regla: <em>"Una orden puede aprobarse si el inventario es suficiente <strong>y</strong> la capacidad disponible es superior al 20 %."</em> Haz clic en los bloques en el orden correcto. Gana 20 puntos.</p>
+                                    <div class="flex flex-wrap gap-2 mb-3" id="bloques-fuente">
+                                        <button class="bloque-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-sm hover:bg-teal-50" data-block="capacidad &gt; 20">capacidad &gt; 20</button>
+                                        <button class="bloque-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-sm hover:bg-teal-50" data-block="O">O</button>
+                                        <button class="bloque-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-sm hover:bg-teal-50" data-block="inventario &gt;= pedido">inventario &gt;= pedido</button>
+                                        <button class="bloque-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-sm hover:bg-teal-50" data-block="Y">Y</button>
+                                    </div>
+                                    <div class="bg-white p-3 rounded border border-slate-200 mb-3 min-h-[2.5rem]">
+                                        <p class="text-xs text-slate-500 mb-1">Tu expresión:</p>
+                                        <p id="bloques-expresion" class="code-chip text-sm text-teal-900">—</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button id="bloques-verificar" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Verificar</button>
+                                        <button id="bloques-limpiar" class="bg-white border border-slate-300 text-slate-700 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-50 transition-colors">Limpiar</button>
+                                    </div>
+                                    <p id="bloques-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACORDEÓN 6: Errores frecuentes -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-subtema-6">
+                            <span>6. Errores frecuentes que debes evitar</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-subtema-6" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <div id="subtema-6-contenido" class="content-section">
+                                <div class="space-y-3 mb-4">
+                                    <div class="bg-white p-4 rounded-lg border-l-4 border-red-600">
+                                        <p class="font-bold text-teal-900 text-sm">Error 1 — Usar <code class="code-chip">Y</code> cuando la regla exige <code class="code-chip">O</code></p>
+                                        <p class="text-sm text-slate-600">Regla: "detener si temperatura &gt; 90 <em>o</em> presión &gt; 120". Incorrecto: <code class="code-chip">temperatura &gt; 90 Y presion &gt; 120</code>. Con <code class="code-chip">Y</code> solo se detendría si ambas fallas ocurren a la vez — demasiado tarde.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border-l-4 border-red-600">
+                                        <p class="font-bold text-teal-900 text-sm">Error 2 — Usar <code class="code-chip">O</code> cuando ambas condiciones son obligatorias</p>
+                                        <p class="text-sm text-slate-600">Regla: "aprobar si calidad ≥ 95 <em>y</em> entrega ≤ 48 horas". Incorrecto: <code class="code-chip">calidad &gt;= 95 O entrega &lt;= 48</code>. Con <code class="code-chip">O</code> aprobaría cumpliendo solo una.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border-l-4 border-red-600">
+                                        <p class="font-bold text-teal-900 text-sm">Error 3 — No respetar los límites</p>
+                                        <p class="text-sm text-slate-600">No es lo mismo <code class="code-chip">temperatura &gt; 90</code> que <code class="code-chip">temperatura &gt;= 90</code>. Si la norma dice "máximo 90", el valor 90 debe contar como permitido.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border-l-4 border-red-600">
+                                        <p class="font-bold text-teal-900 text-sm">Error 4 — Condiciones redundantes</p>
+                                        <p class="text-sm text-slate-600"><code class="code-chip">temperatura &gt; 90 O temperatura &gt; 100</code>: si la segunda se cumple, la primera ya era verdadera. No agrega ninguna situación nueva.</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                    <p class="text-sm text-teal-900 font-semibold mb-2">🎮 Reto final: ¿qué tipo de error es?</p>
+                                    <p class="text-slate-600 text-sm mb-3">Expresión: <code class="code-chip">defectos &gt; 8 O defectos &gt; 10</code>. ¿Cuál es el problema? Gana 15 puntos.</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="reto5-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">Debería usar Y en lugar de O</button>
+                                        <button class="reto5-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="correct">La segunda condición es redundante</button>
+                                        <button class="reto5-btn bg-white border border-slate-300 px-4 py-2 rounded text-sm hover:bg-teal-50" data-a="wrong">Los límites están invertidos</button>
+                                    </div>
+                                    <p id="reto5-feedback" class="mt-2 text-sm font-semibold"></p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECCIÓN: ACTIVIDADES -->
+            <div id="actividades" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-2">Misiones de aprendizaje</h2>
+                <p class="text-slate-600 mb-6">Diseña las condiciones de un sistema de decisión que clasifica un proceso como <strong>NORMAL</strong>, <strong>ALERTA</strong> o <strong>CRÍTICO</strong>. Completa las tres partes y desbloquea la insignia de <strong>Analista de Reglas</strong>.</p>
+
+                <!-- Progreso de misiones -->
+                <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-teal-900">Progreso</span>
+                        <span id="misiones-progreso" class="text-rose-600 font-bold">0/3</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-3">
+                        <div id="misiones-barra" class="bg-teal-600 h-3 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Reglas del sistema -->
+                <div class="bg-white border-l-4 border-teal-600 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-bold text-teal-900 mb-3">📐 Reglas del sistema (variables: temperatura, presión, vibración)</h3>
+                    <ul class="space-y-2 text-sm text-slate-700">
+                        <li><span class="font-bold text-red-600">CRÍTICO</span> cuando: temperatura &gt; 90 °C <strong>O</strong> presión &gt; 120 <strong>O</strong> vibración &gt; 7.</li>
+                        <li><span class="font-bold text-amber-600">ALERTA</span> cuando (sin condición crítica): temperatura &gt; 75 °C <strong>O</strong> presión &gt; 100 <strong>O</strong> vibración &gt; 4.</li>
+                        <li><span class="font-bold text-green-700">NORMAL</span> cuando: temperatura ≤ 75 °C <strong>Y</strong> presión ≤ 100 <strong>Y</strong> vibración ≤ 4.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Misión 1 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">🧩 Misión 1: escribe las tres expresiones</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">Selecciona la expresión lógica correcta para cada nivel del sistema.</p>
+                        <div class="space-y-3 mb-4">
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-red-600 mb-2">Condición CRÍTICA:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="crit" data-a="wrong">temp &gt; 90 Y pres &gt; 120 Y vib &gt; 7</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="crit" data-a="correct">temp &gt; 90 O pres &gt; 120 O vib &gt; 7</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="crit" data-a="wrong">temp &gt;= 90 O pres &gt;= 120 O vib &gt;= 7</button>
+                                </div>
+                                <p class="mm1-feedback mt-1 text-sm font-semibold" data-q="crit"></p>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-amber-600 mb-2">Condición de ALERTA:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="alert" data-a="wrong">temp &gt; 75 Y pres &gt; 100 Y vib &gt; 4</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="alert" data-a="wrong">temp &gt;= 75 O pres &gt;= 100 O vib &gt;= 4</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="alert" data-a="correct">temp &gt; 75 O pres &gt; 100 O vib &gt; 4</button>
+                                </div>
+                                <p class="mm1-feedback mt-1 text-sm font-semibold" data-q="alert"></p>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                                <p class="text-sm font-semibold text-green-700 mb-2">Condición NORMAL:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="norm" data-a="correct">temp &lt;= 75 Y pres &lt;= 100 Y vib &lt;= 4</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="norm" data-a="wrong">temp &lt; 75 O pres &lt; 100 O vib &lt; 4</button>
+                                    <button class="mm1-btn bg-white border border-slate-300 px-3 py-1 rounded code-chip text-xs sm:text-sm" data-q="norm" data-a="wrong">temp &lt;= 75 O pres &lt;= 100 O vib &lt;= 4</button>
+                                </div>
+                                <p class="mm1-feedback mt-1 text-sm font-semibold" data-q="norm"></p>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> en tu cuaderno, escribe las tres expresiones lógicas completas con los nombres de variable que uses en tu notación.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Misión 2 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">🔬 Misión 2: evalúa los casos</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">Para cada caso, marca si la condición crítica y la de alerta son verdaderas, y determina el estado final del proceso.</p>
+                        <div class="overflow-x-auto mb-4">
+                            <table class="min-w-full text-sm border border-slate-200">
+                                <thead class="bg-teal-100 text-teal-900">
+                                    <tr>
+                                        <th class="p-2 text-left border border-slate-200">Caso</th>
+                                        <th class="p-2 border border-slate-200">Temp.</th>
+                                        <th class="p-2 border border-slate-200">Presión</th>
+                                        <th class="p-2 border border-slate-200">Vibración</th>
+                                        <th class="p-2 border border-slate-200">¿Crítica?</th>
+                                        <th class="p-2 border border-slate-200">¿Alerta?</th>
+                                        <th class="p-2 border border-slate-200">Estado final</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white">
+                                        <td class="p-2 border border-slate-200 font-bold">A</td>
+                                        <td class="p-2 border border-slate-200">70</td>
+                                        <td class="p-2 border border-slate-200">95</td>
+                                        <td class="p-2 border border-slate-200">3</td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-crit border border-slate-300 rounded p-1" data-caso="A"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-alert border border-slate-300 rounded p-1" data-caso="A"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-estado border border-slate-300 rounded p-1" data-caso="A"><option value="">–</option><option>NORMAL</option><option>ALERTA</option><option>CRÍTICO</option></select></td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="p-2 border border-slate-200 font-bold">B</td>
+                                        <td class="p-2 border border-slate-200">80</td>
+                                        <td class="p-2 border border-slate-200">95</td>
+                                        <td class="p-2 border border-slate-200">3</td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-crit border border-slate-300 rounded p-1" data-caso="B"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-alert border border-slate-300 rounded p-1" data-caso="B"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-estado border border-slate-300 rounded p-1" data-caso="B"><option value="">–</option><option>NORMAL</option><option>ALERTA</option><option>CRÍTICO</option></select></td>
+                                    </tr>
+                                    <tr class="bg-white">
+                                        <td class="p-2 border border-slate-200 font-bold">C</td>
+                                        <td class="p-2 border border-slate-200">70</td>
+                                        <td class="p-2 border border-slate-200">125</td>
+                                        <td class="p-2 border border-slate-200">3</td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-crit border border-slate-300 rounded p-1" data-caso="C"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-alert border border-slate-300 rounded p-1" data-caso="C"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-estado border border-slate-300 rounded p-1" data-caso="C"><option value="">–</option><option>NORMAL</option><option>ALERTA</option><option>CRÍTICO</option></select></td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="p-2 border border-slate-200 font-bold">D</td>
+                                        <td class="p-2 border border-slate-200">85</td>
+                                        <td class="p-2 border border-slate-200">110</td>
+                                        <td class="p-2 border border-slate-200">6</td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-crit border border-slate-300 rounded p-1" data-caso="D"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-alert border border-slate-300 rounded p-1" data-caso="D"><option value="">–</option><option value="V">V</option><option value="F">F</option></select></td>
+                                        <td class="p-2 border border-slate-200"><select class="caso-estado border border-slate-300 rounded p-1" data-caso="D"><option value="">–</option><option>NORMAL</option><option>ALERTA</option><option>CRÍTICO</option></select></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="casos-verificar" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">Verificar casos</button>
+                        <p id="casos-feedback" class="mt-2 text-sm font-semibold"></p>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> tabla diligenciada con condición crítica (V/F), condición de alerta (V/F) y estado final para los casos A–D.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Misión 3 -->
+                    <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold text-teal-900 mb-3">🧪 Misión 3: crea tus propios casos</h3>
+                        <p class="mb-4 text-slate-700 leading-relaxed">Ingresa valores de temperatura, presión y vibración hasta lograr producir <strong>un caso de cada estado</strong>. El simulador evalúa las reglas por ti; tu reto es descubrir qué combinaciones generan cada resultado.</p>
+                        <div class="grid grid-cols-3 gap-4 mb-3">
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Temperatura</label>
+                                <input id="gen-temp" type="number" value="70" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Presión</label>
+                                <input id="gen-pres" type="number" value="95" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-teal-900">Vibración</label>
+                                <input id="gen-vib" type="number" value="3" class="w-full border border-slate-300 rounded p-2 text-sm">
+                            </div>
+                        </div>
+                        <button id="gen-probar" class="bg-teal-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors mb-3">Probar estado</button>
+                        <div class="bg-white p-3 rounded border border-slate-200 mb-3">
+                            <p class="text-sm text-slate-700">Estado del proceso: <span id="gen-resultado" class="font-bold text-teal-900 text-lg">—</span></p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span id="gen-normal" class="px-3 py-1 rounded-full text-sm font-semibold bg-slate-100 text-slate-400 border border-slate-300">NORMAL ⬜</span>
+                            <span id="gen-alerta" class="px-3 py-1 rounded-full text-sm font-semibold bg-slate-100 text-slate-400 border border-slate-300">ALERTA ⬜</span>
+                            <span id="gen-critico" class="px-3 py-1 rounded-full text-sm font-semibold bg-slate-100 text-slate-400 border border-slate-300">CRÍTICO ⬜</span>
+                        </div>
+                        <p id="gen-feedback" class="mt-2 text-sm font-semibold"></p>
+                        <div class="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-200">
+                            <p class="text-sm text-teal-900">
+                                <span class="font-bold">📝 Producto esperado:</span> registra los tres casos que creaste (valores + estado obtenido) y justifica por qué cada uno produce ese estado.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECCIÓN: EVALUACIÓN -->
+            <div id="evaluacion" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-2">Evaluación</h2>
+                <p class="text-slate-600 mb-4">Responde las 6 preguntas de dificultad progresiva. Selecciona una opción por pregunta.</p>
+                <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6 flex items-center justify-between">
+                    <p class="text-teal-900 font-bold">Puntos de evaluación: <span id="quiz-puntos" class="text-rose-600 text-2xl">0</span>/6</p>
+                    <span id="quiz-insignia" class="text-2xl hidden">🏅</span>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-slate-600 mb-6">Comprueba lo que has aprendido. Selecciona la respuesta correcta para cada pregunta.</p>
+                    <div id="quiz-container"></div>
+                    <button id="submit-quiz-btn" class="mt-6 bg-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-700 transition-colors">Finalizar evaluación</button>
+                    <div id="quiz-result" class="mt-4 text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: RECURSOS -->
+            <div id="recursos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Recursos</h2>
+                <ul class="space-y-6">
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">PSeInt — pseudointérprete de algoritmos</h3>
+                            <p class="text-slate-600 mb-2">Herramienta para escribir y probar condiciones compuestas en pseudocódigo con los operadores Y y O.</p>
+                            <a href="https://pseint.sourceforge.net/" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-1.png" alt="QR PSeInt" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Flowgorithm — diagramas de flujo ejecutables</h3>
+                            <p class="text-slate-600 mb-2">Permite representar decisiones con condiciones compuestas y ejecutarlas paso a paso.</p>
+                            <a href="http://www.flowgorithm.org/" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-2.png" alt="QR Flowgorithm" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Khan Academy — Lógica booleana</h3>
+                            <p class="text-slate-600 mb-2">Lecciones interactivas sobre operadores lógicos y tablas de verdad aplicadas a la computación.</p>
+                            <a href="https://es.khanacademy.org/computing/computer-science" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-3.png" alt="QR Khan Academy" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Anexo: taller de condiciones compuestas</h3>
+                            <p class="text-slate-600 mb-2">Plantilla de ejercicios con reglas industriales para traducir y evaluar condiciones Y / O.</p>
+                            <a href="img/taller-condiciones.pdf" target="_blank" class="underline text-slate-700 hover:text-teal-700">Descargar anexo</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-recurso-4.png" alt="QR Taller de condiciones" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="mt-12 pt-8 pb-8 bg-slate-900 text-center rounded-t-2xl">
+                <p class="text-slate-300 font-medium text-sm">Es creado por</p>
+                <p class="text-white font-bold text-xl mt-1">Ing. Ivan D. Mejia Segura</p>
+                <p class="text-rose-400 text-sm mt-2">Recurso Educativo Digital</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Navegación por pestañas inferiores
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.dataset.target;
+                document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // Acordeones
+        document.querySelectorAll('.accordion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const panel = document.querySelector(targetId);
+                const icon = this.querySelector('span:last-child');
+                if (panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    icon.textContent = '➖';
+                } else {
+                    panel.classList.add('hidden');
+                    icon.textContent = '➕';
+                }
+            });
+        });
+
+        // Sistema de puntos e insignias
+        let puntos = 0;
+        const insignias = new Set();
+        function sumarPuntos(cantidad) {
+            puntos += cantidad;
+            document.getElementById('puntos-total').textContent = puntos;
+            if (puntos >= 80 && !insignias.has('bronze')) {
+                insignias.add('bronze');
+                document.getElementById('insignias').innerHTML += ' 🥉';
+            }
+            if (puntos >= 160 && !insignias.has('silver')) {
+                insignias.add('silver');
+                document.getElementById('insignias').innerHTML += ' 🥈';
+            }
+        }
+
+        // Retos de selección simple (reto1..reto5)
+        function activarReto(selector, feedbackId, puntosReto, mensajeOk, mensajeError) {
+            document.querySelectorAll(selector).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const feedback = document.getElementById(feedbackId);
+                    if (this.dataset.a === 'correct') {
+                        feedback.textContent = mensajeOk;
+                        feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                        sumarPuntos(puntosReto);
+                        document.querySelectorAll(selector).forEach(b => b.disabled = true);
+                    } else {
+                        feedback.textContent = mensajeError;
+                        feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+                    }
+                });
+            });
+        }
+
+        activarReto('.reto1-btn', 'reto1-feedback', 10,
+            '¡Correcto! No puede operar: aunque la temperatura está en rango, la presión no lo está. Con Y, una sola condición falsa basta. +10 puntos',
+            'Revisa: ¿ambas condiciones (T ≤ 90 y P ≤ 120) se cumplen con T = 85 y P = 125?');
+        activarReto('.reto2-btn', 'reto2-feedback', 15,
+            '¡Correcto! La regla exige que ambas condiciones se cumplan, por eso corresponde Y. +15 puntos',
+            'Piensa: ¿basta con cumplir solo una condición para liberar el lote, o se requieren las dos?');
+        activarReto('.reto3-btn', 'reto3-feedback', 15,
+            '¡Correcto! temperatura = 92 hace verdadera la primera condición; con O basta una. +15 puntos',
+            'Evalúa cada parte: ¿92 > 90? ¿115 > 120? Recuerda que con O basta una verdadera.');
+        activarReto('.reto4-btn', 'reto4-feedback', 15,
+            '¡Exacto! La expresión con Y exige que ambas fallas ocurran a la vez, pero la regla dice que basta con una. +15 puntos',
+            'Compara: la regla detiene la máquina con UNA sola condición crítica. ¿La expresión escrita hace lo mismo?');
+        activarReto('.reto5-btn', 'reto5-feedback', 15,
+            '¡Muy bien! Si defectos > 10, automáticamente también es > 8: la segunda condición no aporta nada nuevo. +15 puntos',
+            'Analiza: si la segunda condición se cumple, ¿qué pasa automáticamente con la primera?');
+
+        // Laboratorio de enclavamiento
+        document.getElementById('lab-evaluar').addEventListener('click', function() {
+            const t = parseFloat(document.getElementById('lab-temp').value);
+            const p = parseFloat(document.getElementById('lab-pres').value);
+            const c1 = t <= 90;
+            const c2 = p <= 120;
+            const res = c1 && c2;
+            const e1 = document.getElementById('lab-c1');
+            const e2 = document.getElementById('lab-c2');
+            const er = document.getElementById('lab-res');
+            e1.textContent = c1 ? 'V' : 'F';
+            e2.textContent = c2 ? 'V' : 'F';
+            e1.className = 'font-bold ' + (c1 ? 'text-green-700' : 'text-red-600');
+            e2.className = 'font-bold ' + (c2 ? 'text-green-700' : 'text-red-600');
+            er.textContent = res ? 'SÍ' : 'NO';
+            er.className = 'font-bold ' + (res ? 'text-green-700' : 'text-red-600');
+        });
+
+        // Constructor de expresión con bloques
+        let bloquesSel = [];
+        const expresionCorrecta = 'inventario >= pedido|Y|capacidad > 20';
+        function renderBloques() {
+            document.getElementById('bloques-expresion').textContent = bloquesSel.length ? bloquesSel.join(' ') : '—';
+        }
+        document.querySelectorAll('.bloque-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                bloquesSel.push(this.dataset.block.replace(/&gt;=/g, '>=').replace(/&gt;/g, '>'));
+                this.disabled = true;
+                this.classList.add('opacity-50');
+                renderBloques();
+            });
+        });
+        document.getElementById('bloques-limpiar').addEventListener('click', function() {
+            bloquesSel = [];
+            renderBloques();
+            document.querySelectorAll('.bloque-btn').forEach(b => { b.disabled = false; b.classList.remove('opacity-50'); });
+            document.getElementById('bloques-feedback').textContent = '';
+        });
+        document.getElementById('bloques-verificar').addEventListener('click', function() {
+            const feedback = document.getElementById('bloques-feedback');
+            if (bloquesSel.join('|') === expresionCorrecta) {
+                feedback.textContent = '¡Expresión correcta! La regla exige ambas condiciones, por eso va Y. +20 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(20);
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'La expresión no representa la regla. Pista: se necesitan las dos condiciones unidas por el operador que exige ambas.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+            }
+        });
+
+        // Progreso de misiones
+        const misionesCompletadas = { 1: false, 2: false, 3: false };
+        function actualizarProgreso() {
+            const completadas = Object.values(misionesCompletadas).filter(v => v).length;
+            document.getElementById('misiones-progreso').textContent = completadas + '/3';
+            document.getElementById('misiones-barra').style.width = (completadas / 3 * 100) + '%';
+            if (completadas === 3 && !insignias.has('oro')) {
+                insignias.add('oro');
+                document.getElementById('insignias').innerHTML += ' 🏆';
+            }
+        }
+
+        // Misión 1: tres expresiones
+        const mm1 = { crit: false, alert: false, norm: false };
+        document.querySelectorAll('.mm1-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const q = this.dataset.q;
+                const feedback = document.querySelector('.mm1-feedback[data-q="' + q + '"]');
+                if (this.dataset.a === 'correct') {
+                    feedback.textContent = '¡Correcto!';
+                    feedback.className = 'mm1-feedback mt-1 text-sm font-semibold text-green-700';
+                    mm1[q] = true;
+                    document.querySelectorAll('.mm1-btn[data-q="' + q + '"]').forEach(b => b.disabled = true);
+                    if (mm1.crit && mm1.alert && mm1.norm) {
+                        sumarPuntos(30);
+                        misionesCompletadas[1] = true;
+                        actualizarProgreso();
+                        feedback.textContent = '¡Correcto! Completaste las tres expresiones. +30 puntos';
+                    }
+                } else {
+                    feedback.textContent = 'Esa expresión no coincide con la regla. Revisa el operador y los límites.';
+                    feedback.className = 'mm1-feedback mt-1 text-sm font-semibold text-red-600';
+                }
+            });
+        });
+
+        // Misión 2: evaluar casos A–D
+        const respuestasCasos = {
+            A: { crit: 'F', alert: 'F', estado: 'NORMAL' },
+            B: { crit: 'F', alert: 'V', estado: 'ALERTA' },
+            C: { crit: 'V', alert: 'V', estado: 'CRÍTICO' },
+            D: { crit: 'F', alert: 'V', estado: 'ALERTA' }
+        };
+        document.getElementById('casos-verificar').addEventListener('click', function() {
+            const feedback = document.getElementById('casos-feedback');
+            let aciertos = 0;
+            let total = 0;
+            Object.keys(respuestasCasos).forEach(caso => {
+                const crit = document.querySelector('.caso-crit[data-caso="' + caso + '"]').value;
+                const alert = document.querySelector('.caso-alert[data-caso="' + caso + '"]').value;
+                const estado = document.querySelector('.caso-estado[data-caso="' + caso + '"]').value;
+                const esp = respuestasCasos[caso];
+                total += 3;
+                if (crit === esp.crit) aciertos++;
+                if (alert === esp.alert) aciertos++;
+                if (estado === esp.estado) aciertos++;
+            });
+            if (aciertos === total) {
+                feedback.textContent = '¡Perfecto! Los 4 casos están correctamente evaluados. +30 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(30);
+                misionesCompletadas[2] = true;
+                actualizarProgreso();
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'Tienes ' + aciertos + ' de ' + total + ' respuestas correctas. Pista: evalúa primero la condición crítica; si es verdadera, el estado es CRÍTICO aunque la alerta también lo sea.';
+                feedback.className = 'mt-2 text-sm font-semibold text-red-600';
+            }
+        });
+
+        // Misión 3: generador de estados
+        const estadosLogrados = new Set();
+        document.getElementById('gen-probar').addEventListener('click', function() {
+            const t = parseFloat(document.getElementById('gen-temp').value);
+            const p = parseFloat(document.getElementById('gen-pres').value);
+            const v = parseFloat(document.getElementById('gen-vib').value);
+            const critica = (t > 90) || (p > 120) || (v > 7);
+            const alerta = (t > 75) || (p > 100) || (v > 4);
+            let estado, chip;
+            if (critica) { estado = 'CRÍTICO'; chip = 'gen-critico'; }
+            else if (alerta) { estado = 'ALERTA'; chip = 'gen-alerta'; }
+            else { estado = 'NORMAL'; chip = 'gen-normal'; }
+            const res = document.getElementById('gen-resultado');
+            res.textContent = estado;
+            res.className = 'font-bold text-lg ' + (estado === 'CRÍTICO' ? 'text-red-600' : estado === 'ALERTA' ? 'text-amber-600' : 'text-green-700');
+            estadosLogrados.add(estado);
+            document.getElementById(chip).textContent = estado + ' ✅';
+            document.getElementById(chip).className = 'px-3 py-1 rounded-full text-sm font-semibold bg-teal-100 text-teal-900 border border-teal-300';
+            const feedback = document.getElementById('gen-feedback');
+            if (estadosLogrados.size === 3) {
+                feedback.textContent = '¡Lograste los tres estados! Completaste la actividad. +30 puntos';
+                feedback.className = 'mt-2 text-sm font-semibold text-green-700';
+                sumarPuntos(30);
+                misionesCompletadas[3] = true;
+                actualizarProgreso();
+                this.disabled = true;
+            } else {
+                feedback.textContent = 'Estado: ' + estado + '. Te falta generar: ' + ['NORMAL', 'ALERTA', 'CRÍTICO'].filter(e => !estadosLogrados.has(e)).join(', ') + '.';
+                feedback.className = 'mt-2 text-sm font-semibold text-teal-900';
+            }
+        });
+    </script>
+
+    <!-- QUIZ -->
+    <script>
+        const quizData = [
+            {
+                question: "Si A = Verdadero y B = Falso, ¿cuál es el resultado de A Y B?",
+                options: ["Verdadero", "Falso", "Depende del orden", "No se puede evaluar"],
+                correct: 1
+            },
+            {
+                question: "Con los mismos valores (A = Verdadero, B = Falso), ¿cuál es el resultado de A O B?",
+                options: ["Falso", "Verdadero", "Falso siempre", "Solo si A y B son iguales"],
+                correct: 1
+            },
+            {
+                question: "¿Cuál expresión representa la regla: \"rechazar si existen defectos críticos o los defectos superan 8 %\"?",
+                options: [
+                    "defectoCritico = Verdadero Y defectos &gt; 8",
+                    "defectoCritico = Verdadero O defectos &gt; 8",
+                    "defectoCritico = Falso O defectos &gt;= 8",
+                    "defectos &gt; 8 O defectos &gt; 10"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál expresión representa: \"liberar si la calidad es adecuada y el peso está dentro del rango\"?",
+                options: [
+                    "calidadAdecuada = Verdadero O pesoEnRango = Verdadero",
+                    "calidadAdecuada = Verdadero Y pesoEnRango = Verdadero",
+                    "calidadAdecuada = Falso Y pesoEnRango = Falso",
+                    "calidadAdecuada = Verdadero O calidadAdecuada = Falso"
+                ],
+                correct: 1
+            },
+            {
+                question: "La regla dice: \"detener si temperatura &gt; 90 o presión &gt; 120\". Un estudiante escribe temperatura &gt; 90 Y presion &gt; 120. ¿Qué ocurre?",
+                options: [
+                    "Es equivalente a la regla original",
+                    "Solo se detiene si ambas condiciones críticas ocurren a la vez",
+                    "Se detiene antes de lo necesario",
+                    "La expresión nunca puede evaluarse"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el problema de la expresión: temperatura &gt; 90 O temperatura &gt; 100?",
+                options: [
+                    "Debería usar Y en lugar de O",
+                    "Los operadores de comparación están invertidos",
+                    "La segunda condición es redundante: no agrega situaciones nuevas",
+                    "No tiene ningún problema"
+                ],
+                correct: 2
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.classList.add('mb-6');
+            div.innerHTML = `
+                <p class="font-semibold text-slate-800 mb-3">${index + 1}. ${item.question}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 options-grid">
+                    ${item.options.map((opt, i) => `
+                        <div class="quiz-option border-2 border-slate-200 rounded-lg p-3 cursor-pointer transition-colors"
+                             data-question="${index}" data-option="${i}">
+                            <span class="font-medium text-rose-600 mr-3">${String.fromCharCode(65+i)}.</span> ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            quizContainer.appendChild(div);
+        });
+
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                const q = this.dataset.question;
+                document.querySelectorAll(`[data-question="${q}"]`).forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('submit-quiz-btn').addEventListener('click', () => {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`.quiz-option.selected[data-question="${index}"]`);
+                if (selected && parseInt(selected.dataset.option) === item.correct) score++;
+            });
+            const result = document.getElementById('quiz-result');
+            const pct = Math.round((score / quizData.length) * 100);
+            result.textContent = `Obtuviste ${score} de ${quizData.length} (${pct}%)`;
+            result.className = `mt-4 text-lg font-bold ${pct >= 60 ? 'text-teal-900' : 'text-red-600'}`;
+            document.getElementById('quiz-puntos').textContent = score;
+            if (score === quizData.length) {
+                document.getElementById('quiz-insignia').classList.remove('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>
