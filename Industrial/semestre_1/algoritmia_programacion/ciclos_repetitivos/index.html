@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVA: De las decisiones a la repetición - Primeros pasos con ciclos</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; max-width: 100vw; }
+        html { overflow-x: hidden; max-width: 100vw; }
+        header { position: sticky; top: 0; z-index: 50; }
+        main { max-width: 72rem; margin: 0 auto; }
+        @media (max-width: 767px) {
+            main { padding-left: 0.5rem; padding-right: 0.5rem; }
+            * { box-sizing: border-box; }
+            body, html, main, .accordion-panel, .content-section { overflow-x: hidden !important; max-width: 100vw !important; }
+            pre { overflow-x: auto; max-width: 100%; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+            h4 { font-size: 1.125rem !important; }
+            .accordion-panel { padding: 0.5rem !important; }
+            .content-section { padding-left: 0 !important; padding-right: 0 !important; }
+        }
+        .nav-tab { transition: all 0.3s ease; white-space: nowrap; }
+        .nav-tab.active, .nav-tab:hover { background-color: #115e59; color: #ffffff; border-radius: 0.5rem; }
+        .content-pane { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .content-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .quiz-option:hover { background-color: #fff1f2; }
+        .quiz-option.selected { background-color: #ffe4e6; border-color: #f43f5e; }
+        .accordion-btn { cursor: pointer; }
+        .accordion-panel { transition: all 0.3s ease; }
+        .code-chip { background: #0d9488; color: #fff; padding: 0.15rem 0.5rem; border-radius: 0.375rem; font-family: monospace; font-size: 0.875rem; }
+        .sim-input { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; font-family: monospace; }
+        .sim-btn { background: #0d9488; color: #fff; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: 0.2s; }
+        .sim-btn:hover { background: #115e59; }
+        .opt-btn, .opt-btn-sm { border: 2px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; transition: 0.2s; }
+        .opt-btn:hover, .opt-btn-sm:hover { background: #f0fdfa; border-color: #0d9488; }
+        .opt-btn.correct, .opt-btn-sm.correct { background: #dcfce7; border-color: #15803d; }
+        .opt-btn.wrong, .opt-btn-sm.wrong { background: #fee2e2; border-color: #dc2626; }
+        .opt-btn:disabled, .opt-btn-sm:disabled { cursor: default; }
+        .feedback { display: none; margin-top: 0.5rem; padding: 0.75rem; border-radius: 0.5rem; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: #dcfce7; color: #15803d; }
+        .feedback.wrong { background: #fee2e2; color: #dc2626; }
+        .score-chip { background: #fff1f2; border: 1px solid #fda4af; color: #be123c; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; }
+        .badge { background: #0d9488; color: #fff; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+        .trace-table th, .trace-table td { border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; text-align: center; }
+        .trace-table th { background: #f0fdfa; color: #134e4a; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="min-h-screen bg-slate-50">
+
+        <!-- ENCABEZADO SUPERIOR -->
+        <header class="bg-slate-900 shadow-2xl text-slate-100">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+                <img src="img/logo.svg" alt="Logo" class="h-10 w-10 rounded-lg bg-white p-1">
+                <span class="font-bold text-white text-lg">De las decisiones a la repetición</span>
+            </div>
+        </header>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-100 border-t border-slate-700 z-50">
+            <div class="max-w-6xl mx-auto flex justify-around items-center h-16 overflow-x-auto">
+                <button class="nav-tab active flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="introduccion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="hidden sm:inline">Intro</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="objetivos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span class="hidden sm:inline">Objetivos</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="contenido">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="hidden sm:inline">Contenido</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="actividades">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="hidden sm:inline">Actividades</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="evaluacion">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="hidden sm:inline">Evaluación</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="recursos">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    <span class="hidden sm:inline">Recursos</span>
+                </button>
+                <button class="nav-tab flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-100" data-target="bibliografia">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="hidden sm:inline">Bibliografía</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="p-4 sm:p-6 md:p-10 max-w-6xl mx-auto pb-24">
+
+            <!-- INTRODUCCIÓN -->
+            <div id="introduccion" class="content-pane active">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-4">¿Y si la misma lógica se repite 50 veces?</h2>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Hasta ahora has construido algoritmos que reciben datos, evalúan condiciones y toman decisiones. Un algoritmo puede leer la temperatura de <strong>una máquina</strong> y decidir si su operación es normal, de alerta o de parada.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Pero en una planta industrial rara vez existe una sola máquina, un solo operario o un solo turno de producción. Si debes analizar <strong>50 máquinas</strong>, escribir 50 bloques casi idénticos es posible, pero costoso y propenso a errores.
+                </p>
+                <p class="text-slate-700 leading-relaxed mb-4">
+                    Lo que cambia son los <strong>datos</strong>; lo que se repite es la <strong>lógica</strong>. Ahí entran las <strong>estructuras repetitivas o ciclos</strong>: una forma de indicar "haz esto varias veces" sin duplicar instrucciones.
+                </p>
+                <div class="mt-8 p-4 sm:p-6 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg">
+                    <p class="text-teal-900">
+                        <span class="text-xl">✨</span> Al finalizar este OVA podrás identificar cuándo un problema necesita repetición, construir ciclos <code class="code-chip">Para</code> con variable de control, y usar contadores y acumuladores para resolver problemas de producción. <span class="text-xl">🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- OBJETIVOS -->
+            <div id="objetivos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Objetivos de aprendizaje</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🔍</span>
+                        <span>Reconocer situaciones que requieren estructuras repetitivas antes de programarlas.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🧮</span>
+                        <span>Interpretar la estructura <code class="code-chip">Para</code>: variable de control, valor inicial, final y paso.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">💾</span>
+                        <span>Aplicar contadores y acumuladores para conservar información entre iteraciones.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🔄</span>
+                        <span>Integrar ciclos con decisiones para resolver problemas de producción industrial.</span>
+                    </li>
+                    <li class="flex items-start p-4 bg-white rounded-lg shadow-sm">
+                        <span class="text-rose-600 mr-3 text-2xl">🛠️</span>
+                        <span>Predecir, ejecutar y depurar algoritmos repetitivos con casos de prueba.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- CONTENIDO -->
+            <div id="contenido" class="content-pane">
+                <div class="w-full max-w-8xl mx-auto">
+
+                    <!-- Gamificación -->
+                    <div class="bg-rose-50 border border-rose-300 rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="text-teal-900 font-bold">🏆 Puntos acumulados: <span id="puntos-contenido" class="text-rose-600 text-2xl">0</span></p>
+                            <p class="text-slate-600 text-sm">Resuelve los retos de cada acordeón y desbloquea insignias.</p>
+                        </div>
+                        <div id="insignias-contenido" class="flex gap-2 text-2xl"></div>
+                    </div>
+
+                    <!-- Acordeón 1 -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-1">
+                            <span>1. La repetición antes de programar</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-1" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <p class="mb-4">En planta, muchos procesos son naturalmente repetitivos: turnos que se registran, unidades que se inspeccionan, lotes que se revisan. Antes de escribir un ciclo, conviene responder cuatro preguntas:</p>
+                            <ul class="list-disc pl-6 space-y-2 mb-4">
+                                <li><strong>¿Qué se repite?</strong> La acción común.</li>
+                                <li><strong>¿Cuántas veces?</strong> Fija o depende de un dato.</li>
+                                <li><strong>¿Qué cambia en cada repetición?</strong> El dato o identificador.</li>
+                                <li><strong>¿Qué necesito conservar?</strong> Total, conteo, máximo, etc.</li>
+                            </ul>
+                            <div class="p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎮 Reto: ¿necesita un ciclo?</p>
+                                <p class="text-slate-600 text-sm mb-3">Selecciona si la situación requiere repetición automática.</p>
+                                <div class="space-y-3">
+                                    <div class="c1-q p-3 bg-white rounded shadow-sm" data-q="c1a" data-ok="si">
+                                        <p class="mb-2 font-semibold">a) Registrar la producción de 5 turnos.</p>
+                                        <button class="opt-btn-sm mr-2" data-val="si">Sí, hay ciclo</button>
+                                        <button class="opt-btn-sm" data-val="no">No hay ciclo</button>
+                                        <div class="feedback"></div>
+                                    </div>
+                                    <div class="c1-q p-3 bg-white rounded shadow-sm" data-q="c1b" data-ok="si">
+                                        <p class="mb-2 font-semibold">b) Calcular el índice de eficiencia OEE de cada máquina de una línea de 20.</p>
+                                        <button class="opt-btn-sm mr-2" data-val="si">Sí, hay ciclo</button>
+                                        <button class="opt-btn-sm" data-val="no">No hay ciclo</button>
+                                        <div class="feedback"></div>
+                                    </div>
+                                    <div class="c1-q p-3 bg-white rounded shadow-sm" data-q="c1c" data-ok="no">
+                                        <p class="mb-2 font-semibold">c) Decidir si una sola temperatura supera el límite.</p>
+                                        <button class="opt-btn-sm mr-2" data-val="si">Sí, hay ciclo</button>
+                                        <button class="opt-btn-sm" data-val="no">No hay ciclo</button>
+                                        <div class="feedback"></div>
+                                    </div>
+                                    <div class="c1-q p-3 bg-white rounded shadow-sm" data-q="c1d" data-ok="si">
+                                        <p class="mb-2 font-semibold">d) Contar cuántos productos de un lote de 100 superan el peso mínimo.</p>
+                                        <button class="opt-btn-sm mr-2" data-val="si">Sí, hay ciclo</button>
+                                        <button class="opt-btn-sm" data-val="no">No hay ciclo</button>
+                                        <div class="feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recurso externo -->
+                            <div id="recurso-ext-1" class="mt-6 p-5 bg-teal-50 border border-teal-300 rounded-xl shadow-sm">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="bg-teal-200 text-teal-900 text-xs font-bold px-2 py-1 rounded-full">📹 Recurso sugerido</span>
+                                    <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2 py-1 rounded-full">⏳ URL pendiente</span>
+                                </div>
+                                <p class="text-teal-900 font-semibold mb-1">Video introductorio: ciclos en algoritmos industriales</p>
+                                <p class="text-slate-600 text-sm mb-4">🔍 Búsqueda sugerida: <em>"ciclos repetitivos algoritmos para PSeInt"</em></p>
+                                <a href="#" target="_blank" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors text-sm opacity-50 cursor-not-allowed">
+                                    <span>▶️</span> Ver recurso
+                                </a>
+                                <div class="mt-4 p-3 bg-teal-100 border border-teal-300 rounded-lg">
+                                    <p class="text-teal-900 text-xs font-bold mb-1">Cómo activar este recurso:</p>
+                                    <div class="bg-white border border-teal-300 rounded p-2 text-xs text-slate-700 italic select-all">
+                                        "Encontré un recurso para el recurso-ext-1 del OVA. Actualízalo con esta URL: [URL] y ponle el título: [título]."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón 2 -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-2">
+                            <span>2. Anatomía del ciclo Para</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-2" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <p class="mb-4">La estructura <code class="code-chip">Para</code> en PSeInt permite repetir un bloque indicando el inicio, el fin y el paso de una variable de control.</p>
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg mb-4 overflow-x-auto text-sm"><code>Para turno &lt;- 1 Hasta 5 Hacer
+    Leer produccion
+FinPara</code></pre>
+                            <p class="mb-4">Cada ejecución del bloque se llama <strong>iteración</strong>. No ejecuta "cinco veces" de golpe: avanza una iteración, ejecuta, actualiza la variable y repite.</p>
+                            <div class="p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎮 Simulador de iteraciones</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-3">
+                                    <div><label class="block text-xs font-semibold text-teal-900">Inicio</label><input id="sim2-inicio" type="number" value="1" class="sim-input w-full"></div>
+                                    <div><label class="block text-xs font-semibold text-teal-900">Fin</label><input id="sim2-fin" type="number" value="5" class="sim-input w-full"></div>
+                                    <div><label class="block text-xs font-semibold text-teal-900">Paso</label><input id="sim2-paso" type="number" value="1" class="sim-input w-full"></div>
+                                    <div><label class="block text-xs font-semibold text-teal-900">Acción</label>
+                                        <select id="sim2-accion" class="sim-input w-full">
+                                            <option value="escribir">Escribir i</option>
+                                            <option value="cinco">Escribir i * 5</option>
+                                            <option value="cuadrado">Escribir i ^ 2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button id="sim2-btn" class="sim-btn">Ejecutar ciclo</button>
+                                <div id="sim2-salida" class="mt-4 overflow-x-auto"></div>
+                            </div>
+                            <div class="p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎯 Reto de predicción</p>
+                                <p class="mb-2">¿Cuántas iteraciones ocurren en este ciclo?</p>
+                                <pre class="bg-slate-800 text-white p-3 rounded text-sm"><code>Para i &lt;- 2 Hasta 10 Con Paso 2 Hacer
+    Escribir i
+FinPara</code></pre>
+                                <div class="c2-q mt-3" data-q="c2" data-ok="2">
+                                    <button class="opt-btn mr-2" data-val="0">4</button>
+                                    <button class="opt-btn mr-2" data-val="1">5</button>
+                                    <button class="opt-btn mr-2" data-val="2">5 (i = 2, 4, 6, 8, 10)</button>
+                                    <button class="opt-btn" data-val="3">6</button>
+                                    <div class="feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón 3 -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-3">
+                            <span>3. El acumulador: ¿cuánto llevo?</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-3" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <p class="mb-4">Una variable de lectura como <code class="code-chip">produccion</code> solo conserva la última entrada. Para recordar la suma de todas las lecturas se usa un <strong>acumulador</strong>.</p>
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg mb-4 overflow-x-auto text-sm"><code>total &lt;- 0
+Para turno &lt;- 1 Hasta 3 Hacer
+    Leer produccion
+    total &lt;- total + produccion
+FinPara</code></pre>
+                            <p class="mb-2">La expresión <code class="code-chip">total &lt;- total + produccion</code> no es una igualdad matemática: toma el valor actual, suma la producción y guarda el resultado actualizado.</p>
+                            <div class="p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎮 Simulador de acumulador</p>
+                                <p class="text-sm mb-2">Ingresa producciones separadas por coma (ej: 120,135,110):</p>
+                                <input id="sim3-datos" type="text" value="120,135,110" class="sim-input w-full sm:w-2/3 mb-3">
+                                <button id="sim3-btn" class="sim-btn">Calcular total</button>
+                                <div id="sim3-salida" class="mt-4 overflow-x-auto"></div>
+                            </div>
+                            <div class="p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎯 Reto acumulador</p>
+                                <p class="mb-2">Si las producciones son <strong>60, 80, 90</strong>, ¿cuál es el total?</p>
+                                <input id="c3-resp" type="number" class="sim-input w-32 mr-2">
+                                <button id="c3-btn" class="sim-btn" data-ok="230">Verificar</button>
+                                <div id="c3-feedback" class="feedback"></div>
+                            </div>
+
+                            <!-- Recurso externo -->
+                            <div id="recurso-ext-2" class="mt-6 p-5 bg-teal-50 border border-teal-300 rounded-xl shadow-sm">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="bg-teal-200 text-teal-900 text-xs font-bold px-2 py-1 rounded-full">🧮 Recurso sugerido</span>
+                                    <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2 py-1 rounded-full">⏳ URL pendiente</span>
+                                </div>
+                                <p class="text-teal-900 font-semibold mb-1">Simulador de trazas de ciclos</p>
+                                <p class="text-slate-600 text-sm mb-4">🔍 Búsqueda sugerida: <em>"trace table pseudocode loop simulator"</em></p>
+                                <a href="#" target="_blank" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors text-sm opacity-50 cursor-not-allowed">
+                                    <span>▶️</span> Ver recurso
+                                </a>
+                                <div class="mt-4 p-3 bg-teal-100 border border-teal-300 rounded-lg">
+                                    <p class="text-teal-900 text-xs font-bold mb-1">Cómo activar este recurso:</p>
+                                    <div class="bg-white border border-teal-300 rounded p-2 text-xs text-slate-700 italic select-all">
+                                        "Encontré un recurso para el recurso-ext-2 del OVA. Actualízalo con esta URL: [URL] y ponle el título: [título]."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón 4 -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-4">
+                            <span>4. El contador: ¿cuántas veces ocurrió?</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-4" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <p class="mb-4">Cuando la pregunta es "¿cuántos turnos alcanzaron la meta?" no sumamos producciones; contamos ocurrencias. Eso es un <strong>contador</strong>: aumenta en 1 cada vez que una condición se cumple.</p>
+                            <pre class="bg-slate-800 text-white p-4 rounded-lg mb-4 overflow-x-auto text-sm"><code>cumplen &lt;- 0
+Para turno &lt;- 1 Hasta 5 Hacer
+    Leer produccion
+    Si produccion &gt;= 100 Entonces
+        cumplen &lt;- cumplen + 1
+    FinSi
+FinPara</code></pre>
+                            <table class="w-full trace-table border-collapse mb-4">
+                                <thead><tr><th>Producción</th><th>¿Cumple ≥ 100?</th><th>cumplen</th></tr></thead>
+                                <tbody>
+                                    <tr><td>120</td><td>Sí</td><td>1</td></tr>
+                                    <tr><td>85</td><td>No</td><td>1</td></tr>
+                                    <tr><td>105</td><td>Sí</td><td>2</td></tr>
+                                    <tr><td>90</td><td>No</td><td>2</td></tr>
+                                    <tr><td>130</td><td>Sí</td><td>3</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎮 Simulador contador vs acumulador</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-teal-900">Producciones (coma)</label>
+                                        <input id="sim4-datos" type="text" value="120,85,105,90,130" class="sim-input w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-teal-900">Meta</label>
+                                        <input id="sim4-meta" type="number" value="100" class="sim-input w-full">
+                                    </div>
+                                </div>
+                                <button id="sim4-btn" class="sim-btn">Calcular</button>
+                                <div id="sim4-salida" class="mt-4"></div>
+                            </div>
+                            <div class="p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎯 Reto contador</p>
+                                <p class="mb-2">Para la meta <strong>100</strong> y las producciones <strong>95, 110, 88, 120</strong>, ¿cuántas cumplen?</p>
+                                <div class="c4-q" data-q="c4" data-ok="2">
+                                    <button class="opt-btn mr-2" data-val="0">1</button>
+                                    <button class="opt-btn mr-2" data-val="1">2</button>
+                                    <button class="opt-btn mr-2" data-val="2">3</button>
+                                    <button class="opt-btn" data-val="3">4</button>
+                                    <div class="feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón 5 -->
+                    <div class="mb-4">
+                        <button type="button" class="w-full flex justify-between items-center p-4 bg-teal-100 border border-teal-300 rounded-t-lg focus:outline-none font-bold text-teal-900 text-lg accordion-btn mb-2 text-left" data-target="#panel-5">
+                            <span>5. Depuración: ejecutar no es lo mismo que correcto</span>
+                            <span class="ml-2">➕</span>
+                        </button>
+                    </div>
+                    <div id="panel-5" class="accordion-panel hidden bg-white border border-t-0 border-teal-300 rounded-b-lg p-4 mb-6">
+                        <div class="space-y-6 text-slate-700 leading-relaxed">
+                            <p class="mb-4">Un algoritmo puede ejecutarse sin error y aún así producir un resultado equivocado. Dos errores clásicos: inicializar el acumulador <strong>dentro</strong> del ciclo o intercambiar las actualizaciones de contador y acumulador.</p>
+                            <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg mb-4">
+                                <p class="font-semibold text-red-800">Bug 1: total pierde lo acumulado</p>
+                                <pre class="bg-slate-800 text-white p-3 rounded text-sm mt-2"><code>Para turno &lt;- 1 Hasta 5 Hacer
+    total &lt;- 0        // ERROR: reinicia cada iteración
+    Leer produccion
+    total &lt;- total + produccion
+FinPara
+Escribir total</code></pre>
+                            </div>
+                            <div class="p-4 bg-rose-50 border border-rose-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎮 Detective de errores</p>
+                                <p class="mb-3">¿Qué salida produce el bug anterior si se ingresan 100, 200, 300, 400, 500?</p>
+                                <div class="c5-q" data-q="c5" data-ok="0">
+                                    <button class="opt-btn block w-full text-left mb-2" data-val="0">500 (solo la última producción)</button>
+                                    <button class="opt-btn block w-full text-left mb-2" data-val="1">1500 (la suma correcta)</button>
+                                    <button class="opt-btn block w-full text-left mb-2" data-val="2">0 (no se acumula nada)</button>
+                                    <button class="opt-btn block w-full text-left" data-val="3">Error de ejecución</button>
+                                    <div class="feedback"></div>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                                <p class="text-teal-900 font-bold mb-2">🎯 Reto de casos límite</p>
+                                <p class="mb-2">Si la regla es "requiere revisión cuando hay <strong>más de 20</strong> defectos", ¿un día con exactamente 20 defectos requiere revisión?</p>
+                                <div class="c5b-q" data-q="c5b" data-ok="1">
+                                    <button class="opt-btn mr-2" data-val="0">Sí</button>
+                                    <button class="opt-btn mr-2" data-val="1">No</button>
+                                    <button class="opt-btn" data-val="2">Depende del contexto</button>
+                                    <div class="feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ACTIVIDADES -->
+            <div id="actividades" class="content-pane">
+                <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-teal-900">Misiones prácticas</h2>
+                    <div class="score-chip">🏆 Puntos: <span id="puntos-actividades">0</span></div>
+                </div>
+                <p class="text-slate-700 mb-6">Cada misión representa una actividad de tu guía, convertida en interacción. Gana puntos por cada respuesta correcta.</p>
+
+                <!-- Misión 1 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 1: Identifique la repetición</h3>
+                    <p class="text-slate-700 mb-4">Una empresa inspecciona <strong>8 productos</strong> y registra el peso de cada uno.</p>
+                    <div class="space-y-4">
+                        <div class="m1-q p-3 bg-slate-50 rounded" data-q="m1a" data-ok="0">
+                            <p class="font-semibold mb-2">a) ¿Qué se repite?</p>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="0">Leer o registrar el peso de un producto</button>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="1">Sumar los 8 pesos</button>
+                            <button class="opt-btn block w-full text-left" data-val="2">Decidir si el producto pasa</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m1-q p-3 bg-slate-50 rounded" data-q="m1b" data-ok="2">
+                            <p class="font-semibold mb-2">b) ¿Cuántas veces?</p>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="0">Hasta que el usuario decida</button>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="1">7 veces</button>
+                            <button class="opt-btn block w-full text-left" data-val="2">8 veces</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m1-q p-3 bg-slate-50 rounded" data-q="m1c" data-ok="1">
+                            <p class="font-semibold mb-2">c) ¿Qué cambia en cada repetición?</p>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="0">El nombre de la empresa</button>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="1">El producto que se procesa y posiblemente su peso</button>
+                            <button class="opt-btn block w-full text-left" data-val="2">La cantidad total de productos</button>
+                            <div class="feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Misión 2 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 2: Prediga la salida</h3>
+                    <pre class="bg-slate-800 text-white p-3 rounded text-sm mb-3"><code>Para i &lt;- 1 Hasta 4 Hacer
+    Escribir i * 5
+FinPara</code></pre>
+                    <p class="mb-2">¿Qué aparecerá?</p>
+                    <div class="m2-q" data-q="m2" data-ok="1">
+                        <button class="opt-btn block w-full text-left mb-1" data-val="0">1, 2, 3, 4</button>
+                        <button class="opt-btn block w-full text-left mb-1" data-val="1">5, 10, 15, 20</button>
+                        <button class="opt-btn block w-full text-left mb-1" data-val="2">5, 6, 7, 8</button>
+                        <button class="opt-btn block w-full text-left" data-val="3">1, 5, 10, 15, 20</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <!-- Misión 3 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 3: Ciclo con paso</h3>
+                    <pre class="bg-slate-800 text-white p-3 rounded text-sm mb-3"><code>Para numero &lt;- 3 Hasta 15 Con Paso 3 Hacer
+    Escribir numero
+FinPara</code></pre>
+                    <div class="m3-q p-3 bg-slate-50 rounded mb-3" data-q="m3a" data-ok="0">
+                        <p class="font-semibold mb-2">a) ¿Cuántas iteraciones ocurren?</p>
+                        <button class="opt-btn mr-2" data-val="0">5</button>
+                        <button class="opt-btn mr-2" data-val="1">4</button>
+                        <button class="opt-btn" data-val="2">6</button>
+                        <div class="feedback"></div>
+                    </div>
+                    <div class="m3-q p-3 bg-slate-50 rounded" data-q="m3b" data-ok="0">
+                        <p class="font-semibold mb-2">b) ¿Cuál es la última salida?</p>
+                        <button class="opt-btn mr-2" data-val="0">15</button>
+                        <button class="opt-btn mr-2" data-val="1">12</button>
+                        <button class="opt-btn" data-val="2">18</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <!-- Misión 4 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 4: Siga el acumulador</h3>
+                    <p class="mb-3">Una máquina registra <strong>80, 120, 95, 105</strong> unidades en cuatro turnos. Complete el total después de cada turno.</p>
+                    <table class="w-full trace-table border-collapse mb-4">
+                        <thead><tr><th>Turno</th><th>Producción</th><th>Total después</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>80</td><td><input class="m4-input sim-input w-20" data-ans="80" type="number"></td></tr>
+                            <tr><td>2</td><td>120</td><td><input class="m4-input sim-input w-20" data-ans="200" type="number"></td></tr>
+                            <tr><td>3</td><td>95</td><td><input class="m4-input sim-input w-20" data-ans="295" type="number"></td></tr>
+                            <tr><td>4</td><td>105</td><td><input class="m4-input sim-input w-20" data-ans="400" type="number"></td></tr>
+                        </tbody>
+                    </table>
+                    <button id="m4-btn" class="sim-btn">Verificar tabla</button>
+                    <div id="m4-feedback" class="feedback"></div>
+                </div>
+
+                <!-- Misión 5 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 5: Corrija el inicializador</h3>
+                    <p class="mb-3">Este algoritmo siempre imprime 500 aunque los datos sean 100, 200, 300, 400, 500. ¿Qué cambio lo corrige?</p>
+                    <pre class="bg-slate-800 text-white p-3 rounded text-sm mb-3"><code>Para turno &lt;- 1 Hasta 5 Hacer
+    total &lt;- 0
+    Leer produccion
+    total &lt;- total + produccion
+FinPara
+Escribir total</code></pre>
+                    <div class="m5-q" data-q="m5" data-ok="1">
+                        <button class="opt-btn block w-full text-left mb-1" data-val="0">Cambiar Hasta 5 por Hasta 6</button>
+                        <button class="opt-btn block w-full text-left mb-1" data-val="1">Mover `total &lt;- 0` antes del Para</button>
+                        <button class="opt-btn block w-full text-left mb-1" data-val="2">Cambiar `+` por `*`</button>
+                        <button class="opt-btn block w-full text-left" data-val="3">Cambiar el orden de Escribir total</button>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <!-- Misión 6 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 6: ¿Contador o acumulador?</h3>
+                    <p class="mb-3">Clasifique cada situación.</p>
+                    <div class="space-y-3">
+                        <div class="m6-q p-3 bg-slate-50 rounded" data-q="m6a" data-ok="acum">
+                            <p class="mb-2 font-semibold">A. Producción total de 10 operarios.</p>
+                            <button class="opt-btn-sm mr-2" data-val="acum">Acumulador</button>
+                            <button class="opt-btn-sm" data-val="cont">Contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m6-q p-3 bg-slate-50 rounded" data-q="m6b" data-ok="cont">
+                            <p class="mb-2 font-semibold">B. Número de operarios que produjeron menos de 80 unidades.</p>
+                            <button class="opt-btn-sm mr-2" data-val="acum">Acumulador</button>
+                            <button class="opt-btn-sm" data-val="cont">Contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m6-q p-3 bg-slate-50 rounded" data-q="m6c" data-ok="acum">
+                            <p class="mb-2 font-semibold">C. Total de productos defectuosos en 7 días.</p>
+                            <button class="opt-btn-sm mr-2" data-val="acum">Acumulador</button>
+                            <button class="opt-btn-sm" data-val="cont">Contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m6-q p-3 bg-slate-50 rounded" data-q="m6d" data-ok="cont">
+                            <p class="mb-2 font-semibold">D. Número de días con más de 20 defectos.</p>
+                            <button class="opt-btn-sm mr-2" data-val="acum">Acumulador</button>
+                            <button class="opt-btn-sm" data-val="cont">Contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m6-q p-3 bg-slate-50 rounded" data-q="m6e" data-ok="acum">
+                            <p class="mb-2 font-semibold">E. Total de minutos de parada en 6 turnos.</p>
+                            <button class="opt-btn-sm mr-2" data-val="acum">Acumulador</button>
+                            <button class="opt-btn-sm" data-val="cont">Contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Misión 7 -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🎯 Misión 7: Diseñe antes de programar</h3>
+                    <p class="mb-3">Una planta registra durante <strong>8 turnos</strong> la cantidad producida. La meta por turno es <strong>150 unidades</strong>. Se necesita la producción total y cuántos turnos alcanzaron la meta.</p>
+                    <div class="space-y-3">
+                        <div class="m7-q p-3 bg-slate-50 rounded" data-q="m7a" data-ok="0">
+                            <p class="mb-2 font-semibold">¿Cuántas veces se repite la lectura?</p>
+                            <button class="opt-btn mr-2" data-val="0">8</button>
+                            <button class="opt-btn mr-2" data-val="1">150</button>
+                            <button class="opt-btn" data-val="2">Hasta 8 o hasta 150</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m7-q p-3 bg-slate-50 rounded" data-q="m7b" data-ok="1">
+                            <p class="mb-2 font-semibold">¿Qué variables necesitas conservar?</p>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="0">Solo produccion</button>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="1">Un acumulador (total) y un contador (cumplen)</button>
+                            <button class="opt-btn block w-full text-left" data-val="2">Solo un contador</button>
+                            <div class="feedback"></div>
+                        </div>
+                        <div class="m7-q p-3 bg-slate-50 rounded" data-q="m7c" data-ok="0">
+                            <p class="mb-2 font-semibold">¿Qué condición decide si se incrementa el contador?</p>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="0">produccion >= 150</button>
+                            <button class="opt-btn block w-full text-left mb-1" data-val="1">produccion &lt; 150</button>
+                            <button class="opt-btn block w-full text-left" data-val="2">produccion = 150</button>
+                            <div class="feedback"></div>
+                        </div>
+                    </div>
+                    <div id="m7-solucion" class="hidden mt-4 p-4 bg-teal-50 border border-teal-300 rounded-lg">
+                        <p class="font-semibold text-teal-900 mb-2">Una posible estructura:</p>
+                        <pre class="bg-slate-800 text-white p-3 rounded text-sm"><code>total &lt;- 0
+cumplen &lt;- 0
+Para turno &lt;- 1 Hasta 8 Hacer
+    Leer produccion
+    total &lt;- total + produccion
+    Si produccion &gt;= 150 Entonces
+        cumplen &lt;- cumplen + 1
+    FinSi
+FinPara
+Escribir "Producción total: ", total
+Escribir "Turnos que alcanzaron la meta: ", cumplen</code></pre>
+                    </div>
+                </div>
+
+                <!-- Reto Final -->
+                <div class="bg-white border-l-4 border-rose-500 rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-3">🏆 Reto final: calidad en 7 días</h3>
+                    <p class="mb-3">Una empresa registra unidades defectuosas durante 7 días. Un día requiere revisión si tiene <strong>más de 20</strong> defectos. Datos: <strong>10, 25, 18, 30, 20, 21, 15</strong>.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-teal-900">Total de defectos</label>
+                            <input id="rf-total" type="number" class="sim-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-teal-900">Días que requieren revisión</label>
+                            <input id="rf-dias" type="number" class="sim-input w-full">
+                        </div>
+                    </div>
+                    <button id="rf-btn" class="sim-btn">Verificar reto</button>
+                    <div id="rf-feedback" class="feedback"></div>
+                </div>
+
+                <div id="act-badge" class="hidden mt-6 p-4 bg-rose-50 border border-rose-300 rounded-xl text-center">
+                    <p class="text-3xl">🎖️</p>
+                    <p class="text-teal-900 font-bold">¡Insignia desbloqueada: Ingeniero de Ciclos!</p>
+                    <p class="text-slate-600 text-sm">Has completado las misiones del OVA.</p>
+                </div>
+            </div>
+
+            <!-- EVALUACIÓN -->
+            <div id="evaluacion" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Evaluación</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-slate-600 mb-6">Comprueba lo aprendido. Selecciona la respuesta correcta para cada pregunta.</p>
+                    <div id="quiz-container"></div>
+                    <button id="submit-quiz-btn" class="mt-6 bg-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-700 transition-colors">Finalizar evaluación</button>
+                    <div id="quiz-result" class="mt-4 text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- RECURSOS -->
+            <div id="recursos" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Recursos para profundizar</h2>
+                <p class="text-slate-700 leading-relaxed mb-6">Herramientas y documentación para practicar ciclos fuera del OVA:</p>
+                <ul class="space-y-4">
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Descargar PSeInt</h3>
+                            <p class="text-slate-600 mb-2">Sitio oficial del intérprete de pseudocódigo. Disponible para Windows, Linux y macOS.</p>
+                            <a href="https://pseint.sourceforge.net/index.php?page=descargas.php" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-pseint.png" alt="QR Descargar PSeInt" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-teal-900">Documentación de PSeInt</h3>
+                            <p class="text-slate-600 mb-2">Manuales, ejemplos y ayuda integrada del programa.</p>
+                            <a href="https://pseint.sourceforge.net/index.php?page=documentacion.php" target="_blank" class="underline text-slate-700 hover:text-teal-700">Ir al recurso</a>
+                        </div>
+                        <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                            <div class="bg-rose-50 border border-rose-300 rounded flex items-center justify-center" style="width:2cm;height:2cm;">
+                                <img src="img/qr-pseint-doc.png" alt="QR Documentación PSeInt" class="max-w-full max-h-full object-contain" loading="lazy">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- BIBLIOGRAFÍA -->
+            <div id="bibliografia" class="content-pane">
+                <h2 class="text-2xl sm:text-3xl font-bold text-teal-900 mb-6">Bibliografía</h2>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500">
+                        <span class="block text-slate-700">
+                            Joyanes Aguilar, L. (2008). <i>Fundamentos de programación: algoritmos, estructuras de datos y objetos</i> (4ª ed.). McGraw-Hill.
+                        </span>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500">
+                        <span class="block text-slate-700">
+                            Novara, P. (s.f.). <i>PSeInt: pseudo-intérprete para aprendizaje de programación</i>. Recuperado de <a href="https://pseint.sourceforge.net" target="_blank" class="text-teal-700 underline">https://pseint.sourceforge.net</a>
+                        </span>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-rose-500">
+                        <span class="block text-slate-700">
+                            Mejía Segura, I. D. (2026). <i>De las decisiones a la repetición: primeros pasos con ciclos</i> [Material de clase]. Universidad de Córdoba.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="mt-12 pt-8 pb-8 bg-slate-900 text-center rounded-t-2xl">
+                <p class="text-slate-300 font-medium text-sm">Es creado por</p>
+                <p class="text-white font-bold text-xl mt-1">Ing. Ivan D. Mejia Segura</p>
+                <p class="text-rose-400 text-sm mt-2">Recurso Educativo Digital</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Navegación
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.dataset.target;
+                document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                this.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Acordeones
+        document.querySelectorAll('.accordion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const panel = document.querySelector(targetId);
+                const icon = this.querySelector('span:last-child');
+                if (panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    icon.textContent = '➖';
+                } else {
+                    panel.classList.add('hidden');
+                    icon.textContent = '➕';
+                }
+            });
+        });
+
+        // Puntos e insignias
+        let puntos = 0;
+        const awarded = new Set();
+        function sumarPuntos(q, n) {
+            if (!awarded.has(q)) {
+                awarded.add(q);
+                puntos += n;
+                document.getElementById('puntos-contenido').textContent = puntos;
+                document.getElementById('puntos-actividades').textContent = puntos;
+                actualizarInsignias();
+            }
+        }
+        function actualizarInsignias() {
+            const box = document.getElementById('insignias-contenido');
+            if (puntos >= 50 && !box.innerHTML.includes('🔎')) box.insertAdjacentHTML('beforeend', '<span title="Analista de ciclos">🔎</span>');
+            if (puntos >= 100 && !box.innerHTML.includes('🎖️')) box.insertAdjacentHTML('beforeend', '<span title="Ingeniero de ciclos">🎖️</span>');
+            if (puntos >= 150) document.getElementById('act-badge')?.classList.remove('hidden');
+        }
+
+        // Helpers para botones de opción
+        function setupOptions(selector, points) {
+            document.querySelectorAll(selector).forEach(group => {
+                const ok = group.dataset.ok;
+                const q = group.dataset.q;
+                group.querySelectorAll('.opt-btn, .opt-btn-sm').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (btn.disabled) return;
+                        group.querySelectorAll('.opt-btn, .opt-btn-sm').forEach(b => { b.disabled = true; });
+                        const fb = group.querySelector('.feedback');
+                        fb.classList.add('show');
+                        if (btn.dataset.val === ok) {
+                            btn.classList.add('correct');
+                            fb.classList.add('correct');
+                            fb.textContent = '¡Correcto! ✅';
+                            sumarPuntos(q, points);
+                        } else {
+                            btn.classList.add('wrong');
+                            fb.classList.add('wrong');
+                            group.querySelectorAll('.opt-btn, .opt-btn-sm').forEach(b => { if (b.dataset.val === ok) b.classList.add('correct'); });
+                            fb.textContent = 'Casi. La respuesta correcta está marcada. Inténtalo en el siguiente reto.';
+                        }
+                    });
+                });
+            });
+        }
+        setupOptions('.c1-q', 10);
+        setupOptions('.c2-q', 10);
+        setupOptions('.c4-q', 10);
+        setupOptions('.c5-q', 10);
+        setupOptions('.c5b-q', 10);
+        setupOptions('.m1-q', 10);
+        setupOptions('.m2-q', 10);
+        setupOptions('.m3-q', 10);
+        setupOptions('.m5-q', 10);
+        setupOptions('.m6-q', 10);
+        setupOptions('.m7-q', 10);
+
+        // Reto c3 acumulador numérico
+        document.getElementById('c3-btn').addEventListener('click', () => {
+            const btn = document.getElementById('c3-btn');
+            const fb = document.getElementById('c3-feedback');
+            if (btn.dataset.answered) return;
+            const val = document.getElementById('c3-resp').value;
+            fb.classList.add('show');
+            if (val === '230') {
+                fb.className = 'feedback show correct';
+                fb.textContent = '¡Correcto! 60 + 80 + 90 = 230.';
+                sumarPuntos('c3', 10);
+            } else {
+                fb.className = 'feedback show wrong';
+                fb.textContent = 'Revisa la suma: 60 + 80 = 140, más 90 = 230.';
+            }
+            btn.dataset.answered = '1';
+        });
+
+        // Simulador Para
+        document.getElementById('sim2-btn').addEventListener('click', () => {
+            const inicio = parseInt(document.getElementById('sim2-inicio').value);
+            const fin = parseInt(document.getElementById('sim2-fin').value);
+            const paso = parseInt(document.getElementById('sim2-paso').value) || 1;
+            const accion = document.getElementById('sim2-accion').value;
+            let rows = '';
+            let salidas = [];
+            if (paso === 0) { document.getElementById('sim2-salida').innerHTML = '<p class="text-red-600">El paso no puede ser 0.</p>'; return; }
+            if ((paso > 0 && inicio > fin) || (paso < 0 && inicio < fin)) { document.getElementById('sim2-salida').innerHTML = '<p class="text-slate-600">No hay iteraciones (inicio ya supera el fin con ese paso).</p>'; return; }
+            for (let i = inicio; (paso > 0 ? i <= fin : i >= fin); i += paso) {
+                let out = i;
+                if (accion === 'cinco') out = i * 5;
+                if (accion === 'cuadrado') out = i * i;
+                rows += `<tr><td>${i}</td><td>${out}</td></tr>`;
+                salidas.push(out);
+            }
+            document.getElementById('sim2-salida').innerHTML = `<p class="text-sm text-slate-600 mb-2">Iteraciones: ${salidas.length} — Salida: ${salidas.join(', ')}</p><table class="trace-table border-collapse"><thead><tr><th>Variable de control</th><th>Valor escrito</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+
+        // Simulador acumulador
+        document.getElementById('sim3-btn').addEventListener('click', () => {
+            const datos = document.getElementById('sim3-datos').value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+            let total = 0;
+            let rows = '';
+            datos.forEach((d, idx) => {
+                const antes = total;
+                total += d;
+                rows += `<tr><td>${idx + 1}</td><td>${d}</td><td>${antes}</td><td>${total}</td></tr>`;
+            });
+            document.getElementById('sim3-salida').innerHTML = `<p class="font-bold text-teal-900 mb-2">Total acumulado: ${total}</p><table class="trace-table border-collapse"><thead><tr><th>Turno</th><th>Producción</th><th>Total antes</th><th>Total después</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+
+        // Simulador contador
+        document.getElementById('sim4-btn').addEventListener('click', () => {
+            const datos = document.getElementById('sim4-datos').value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+            const meta = parseFloat(document.getElementById('sim4-meta').value);
+            let total = 0, cumplen = 0, noCumplen = 0;
+            let rows = '';
+            datos.forEach((d, idx) => {
+                total += d;
+                if (d >= meta) cumplen++; else noCumplen++;
+                rows += `<tr><td>${idx + 1}</td><td>${d}</td><td>${d >= meta ? 'Sí' : 'No'}</td><td>${cumplen}</td></tr>`;
+            });
+            document.getElementById('sim4-salida').innerHTML = `<div class="grid grid-cols-3 gap-3 mb-3"><div class="p-3 bg-teal-50 rounded text-center"><p class="text-xs text-slate-500">Total</p><p class="text-xl font-bold text-teal-900">${total}</p></div><div class="p-3 bg-green-50 rounded text-center"><p class="text-xs text-slate-500">Cumplen</p><p class="text-xl font-bold text-green-700">${cumplen}</p></div><div class="p-3 bg-red-50 rounded text-center"><p class="text-xs text-slate-500">No cumplen</p><p class="text-xl font-bold text-red-600">${noCumplen}</p></div></div><table class="trace-table border-collapse"><thead><tr><th>Turno</th><th>Producción</th><th>¿Cumple meta?</th><th>Contador acumulado</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+
+        // Misión 4 tabla acumuladora
+        document.getElementById('m4-btn').addEventListener('click', () => {
+            const btn = document.getElementById('m4-btn');
+            if (btn.dataset.answered) return;
+            const inputs = document.querySelectorAll('.m4-input');
+            let allCorrect = true;
+            inputs.forEach(inp => {
+                if (inp.value === inp.dataset.ans) {
+                    inp.style.borderColor = '#15803d';
+                    inp.style.background = '#dcfce7';
+                } else {
+                    inp.style.borderColor = '#dc2626';
+                    inp.style.background = '#fee2e2';
+                    allCorrect = false;
+                }
+            });
+            const fb = document.getElementById('m4-feedback');
+            fb.classList.add('show');
+            if (allCorrect) {
+                fb.className = 'feedback show correct';
+                fb.textContent = '¡Tabla correcta! 0 → 80 → 200 → 295 → 400.';
+                sumarPuntos('m4', 10);
+            } else {
+                fb.className = 'feedback show wrong';
+                fb.textContent = 'Revisa: en cada turno sumas la producción al total anterior.';
+            }
+            btn.dataset.answered = '1';
+        });
+
+        // Misión 7 mostrar solución cuando respondan
+        document.querySelectorAll('.m7-q .opt-btn').forEach(b => b.addEventListener('click', () => {
+            const all = document.querySelectorAll('.m7-q');
+            let answered = 0, correct = 0;
+            all.forEach(q => {
+                const selected = q.querySelector('.opt-btn.correct');
+                if (selected) { answered++; if (selected.dataset.val === q.dataset.ok) correct++; }
+            });
+            if (correct === all.length) {
+                document.getElementById('m7-solucion').classList.remove('hidden');
+                sumarPuntos('m7-all', 10);
+            }
+        }));
+
+        // Reto final
+        document.getElementById('rf-btn').addEventListener('click', () => {
+            const btn = document.getElementById('rf-btn');
+            if (btn.dataset.answered) return;
+            const total = document.getElementById('rf-total').value;
+            const dias = document.getElementById('rf-dias').value;
+            const fb = document.getElementById('rf-feedback');
+            fb.classList.add('show');
+            if (total === '139' && dias === '3') {
+                fb.className = 'feedback show correct';
+                fb.textContent = '¡Reto final superado! Total = 139 defectos; 3 días superan 20.';
+                sumarPuntos('rf', 20);
+            } else {
+                fb.className = 'feedback show wrong';
+                fb.textContent = 'Revisa: suma todos los defectos y cuenta solo los días con más de 20 (no 20 exacto). Respuestas: 139 y 3.';
+            }
+            btn.dataset.answered = '1';
+        });
+
+        // Quiz de evaluación
+        const quizData = [
+            {
+                question: "¿Qué permite una estructura repetitiva en un algoritmo?",
+                options: ["Ejecutar una acción varias veces sin duplicar código", "Evaluar una condición una sola vez", "Guardar permanentemente todos los valores leídos", "Ordenar datos automáticamente"],
+                correct: 0
+            },
+            {
+                question: "En el ciclo `Para i <- 2 Hasta 10 Con Paso 2 Hacer`, ¿cuántas iteraciones ocurren?",
+                options: ["4 (2, 4, 6, 8)", "5 (2, 4, 6, 8, 10)", "6 (2, 4, 6, 8, 10, 12)", "Ninguna, 10 no es divisible por 2"],
+                correct: 1
+            },
+            {
+                question: "La instrucción `total <- total + produccion` significa que:",
+                options: ["La variable total es igual a sí misma más produccion como en matemáticas", "Se toma el valor actual de total, se suma produccion y se guarda el resultado", "Se reemplaza total por produccion", "Se reinicia total en cada iteración"],
+                correct: 1
+            },
+            {
+                question: "Si necesito contar cuántos turnos alcanzaron una meta de producción, debo usar:",
+                options: ["Un acumulador", "Un contador", "Una variable de control", "Una constante"],
+                correct: 1
+            },
+            {
+                question: "El siguiente algoritmo imprime 500 con los datos 100, 200, 300, 400, 500. ¿Por qué?\nPara turno <- 1 Hasta 5 Hacer\n    total <- 0\n    Leer produccion\n    total <- total + produccion\nFinPara\nEscribir total",
+                options: ["El acumulador se inicializa dentro del ciclo y pierde lo acumulado", "El ciclo no itera correctamente", "El valor final siempre debe ser 500", "Falta una condición Si"],
+                correct: 0
+            },
+            {
+                question: "Con los defectos 10, 25, 18, 30, 20, 21, 15 y la regla 'más de 20 defectos requiere revisión', ¿cuántos días requieren revisión?",
+                options: ["3", "4", "5", "2"],
+                correct: 0
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.classList.add('mb-6');
+            div.innerHTML = `
+                <p class="font-semibold text-slate-800 mb-3">${index + 1}. ${item.question.replace(/\n/g, '<br>')}</p>
+                <div class="grid grid-cols-1 gap-3 options-grid">
+                    ${item.options.map((opt, i) => `
+                        <div class="quiz-option border-2 border-slate-200 rounded-lg p-3 cursor-pointer transition-colors"
+                             data-question="${index}" data-option="${i}">
+                            <span class="font-medium text-rose-600 mr-2">${String.fromCharCode(65+i)}.</span> ${opt.replace(/\n/g, '<br>')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            quizContainer.appendChild(div);
+        });
+
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                const q = this.dataset.question;
+                document.querySelectorAll(`[data-question="${q}"]`).forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('submit-quiz-btn').addEventListener('click', () => {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`.quiz-option.selected[data-question="${index}"]`);
+                if (selected && parseInt(selected.dataset.option) === item.correct) score++;
+            });
+            const result = document.getElementById('quiz-result');
+            const pct = Math.round((score / quizData.length) * 100);
+            result.className = `mt-4 text-lg font-bold ${pct >= 60 ? 'text-teal-900' : 'text-red-600'}`;
+            result.textContent = `Obtuviste ${score} de ${quizData.length} (${pct}%)`;
+        });
+    </script>
+
+    <!-- Plugin de accesibilidad — NO MODIFICAR NI MOVER -->
+    <script src="https://elens.ecodestudio.dev/elens.js"></script>
+</body>
+</html>
